@@ -30,6 +30,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_map: ^3.1.0
+  geolocator: ^9.0.2
+  latlong2: ^0.8.1
+  http:
+  shared_preferences: ^2.2.2
+  provider: ^5.0.0
+  firebase_core: ^2.24.2
+  firebase_auth:
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -39,6 +47,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+    
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
