@@ -6,7 +6,7 @@ import 'package:prueba/Models/Usuario.dart';
 // Importa la librería para manejar JSON
 
 class UserProvider extends ChangeNotifier {
-    final String _endpoint = " https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
+    final String _endpoint = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
 
 Future<bool> createUsuario(UsuarioModel usuario) async {
     try {

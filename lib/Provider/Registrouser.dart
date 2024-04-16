@@ -1,9 +1,11 @@
+import 'package:http/http.dart' as http; // Importa la librería para hacer peticiones HTTP
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:prueba/Models/Usuario.dart';
+// Importa la librería para manejar JSON
 
 class FirebaseProvider {
   final String _endpoint = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
+
   
   Future<Map<String, dynamic>> fetchUsuarios() async {
     final response = await http.get(Uri.parse(_endpoint));
@@ -31,6 +33,8 @@ class FirebaseProvider {
       return false;
     }
   }
+
+  void login(String s, String t) {}
 }
 
 class AuthenticationService {

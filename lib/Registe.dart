@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/Login.dart';
 import 'package:prueba/Models/Usuario.dart';
-import 'package:prueba/Provider/loginpro.dart';
+import 'package:prueba/Provider/Registrouser.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
