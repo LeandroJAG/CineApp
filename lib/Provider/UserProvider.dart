@@ -1,31 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Importa la librería para hacer peticiones HTTP
 import 'dart:convert';
 
 import 'package:prueba/Models/Usuario.dart';
-// Importa la librería para manejar JSON
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
-class UserProvider extends ChangeNotifier {
-    final String _endpoint = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
+class FirebaseProvider {
+  final String _endpoint =
+      "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
 
-Future<bool> createUsuario(UsuarioModel usuario) async {
-    try {
-      final url = Uri.parse(_endpoint);
-      final response = await http.post(
-        url,
-        body: jsonEncode(usuario.toJson()),
-      );
-
-      if (response.statusCode == 200) {
-        return true; // Registro exitoso
-      } else {
-        throw Exception("Error creating usuario: ${response.statusCode}");
-      }
-    } catch (e) {
-      return false;
-    }
-  }
-  
   Future<Map<String, dynamic>> fetchUsuarios() async {
     final response = await http.get(Uri.parse(_endpoint));
     if (response.statusCode == 200) {
@@ -37,3 +19,42 @@ Future<bool> createUsuario(UsuarioModel usuario) async {
   }
 }
 
+class AuthenticationServices {
+  final FirebaseProvider _firebaseProvider = FirebaseProvider();
+
+  Future<bool> signIn(String email, String password) async {
+    final usuarios = await _firebaseProvider.fetchUsuarios();
+    final usuario = usuarios.values.firstWhere(
+        (user) => user['correo'] == email && user['contrasena'] == password,
+        orElse: () => null);
+    if (usuario != null) {
+      // Guardar el estado de la sesión en SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);
+      prefs.setString('correo', email);
+      prefs.setString('pin', password);
+    }
+
+    return usuario != null;
+  }
+
+  Future<List<UsuarioModel>> getAll() async {
+    try {
+      final String _endpoint =
+          "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
+      final response = await http.get(Uri.parse(_endpoint));
+      if (response.statusCode == 200) {
+        print("entro");
+        String body = utf8.decode(response.bodyBytes);
+        final jsonData = jsonDecode(body);
+        final listData = User.fromJsonList(jsonData);
+        //state = listData.userList;
+        return listData.userList;
+      } else {
+        throw Exception("Ocurrió algo ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Error $e");
+    }
+  }
+}

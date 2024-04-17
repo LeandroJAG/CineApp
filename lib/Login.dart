@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/Map.dart';
+import 'package:prueba/Models/Usuario.dart';
 import 'package:prueba/Provider/Registrouser.dart';
+import 'package:prueba/Provider/UserProvider.dart';
 import 'package:prueba/Registe.dart';
 import 'package:prueba/Sharepreference/Sharepreference.dart';
 
@@ -30,8 +32,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
-  final usuarioProvider = FirebaseProvider();
+ // FirebaseProvider  usuarioProvider = FirebaseProvider();
+  AuthenticationServices service = AuthenticationServices();
+  late Future < List<UsuarioModel>> userList;
+ @override
+  void initState() {
+    super.initState();
+    userList=service.getAll();
+    
 
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    usuarioProvider.login(email!, password!);
+                    
+                  //  usuarioProvider.login(email!, password!);
                     Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => MapScreen()),
