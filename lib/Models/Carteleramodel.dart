@@ -1,4 +1,4 @@
-class CarteleraModel {
+class Movie {
   final String title;
   final String director;
   final String imageUrl;
@@ -8,7 +8,7 @@ class CarteleraModel {
   bool isFavorite;
   String review;
 
-  CarteleraModel({
+  Movie({
     required this.title,
     required this.director,
     required this.imageUrl,

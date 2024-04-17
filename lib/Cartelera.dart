@@ -1,29 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/Map.dart';
-
-class Movie {
-  final String title;
-  final String director;
-  late final String imageUrl;
-  final String description;
-  final String horario;
-  final List<String> categories;
-  bool isFavorite;
-  String review;
-
-  Movie({
-    required this.title,
-    required this.director,
-    required this.imageUrl,
-    required this.description,
-    required this.horario,
-    this.categories = const [],
-    this.isFavorite = false,
-    this.review = '',
-  });
-
-  static fromJson(data) {}
-}
+import 'package:prueba/Models/Carteleramodel.dart';
 
 class MyApp1 extends StatefulWidget {
   const MyApp1({Key? key});
@@ -48,12 +25,10 @@ class _MyAppState extends State<MyApp1> {
     // Add more movies with categories
   ];
 
-
   @override
   void initState() {
     super.initState();
-    if (movies.isNotEmpty) {
-    }
+    if (movies.isNotEmpty) {}
   }
 
   @override
@@ -111,7 +86,32 @@ class _MyAppState extends State<MyApp1> {
                         ],
                       ),
                       leading: _buildMovieImage(movies[index].imageUrl),
-                      trailing: _buildButtons(context, index),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              movies[index].isFavorite ? Icons.favorite : Icons.favorite_border,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              _toggleFavorite(index);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.rate_review),
+                            onPressed: () {
+                              _openReviewScreen(context, movies[index]);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              _deleteMovie(index);
+                            },
+                          ),
+                        ],
+                      ),
                       onTap: () {
                         _navigateToMovieDetails(context, movies[index]);
                       },
@@ -152,29 +152,6 @@ class _MyAppState extends State<MyApp1> {
         height: 50.0,
         fit: BoxFit.cover,
       ),
-    );
-  }
-
-  Widget _buildButtons(BuildContext context, int index) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: Icon(
-            movies[index].isFavorite ? Icons.favorite : Icons.favorite_border,
-            color: Colors.red,
-          ),
-          onPressed: () {
-            _toggleFavorite(index);
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.rate_review),
-          onPressed: () {
-            _openReviewScreen(context, movies[index]);
-          },
-        ),
-      ],
     );
   }
 
@@ -221,6 +198,33 @@ class _MyAppState extends State<MyApp1> {
         movies.add(newMovie);
       });
     }
+  }
+
+  void _deleteMovie(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confirmar eliminación'),
+        content: Text('¿Estás seguro de que deseas eliminar "${movies[index].title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                movies.removeAt(index);
+              });
+              Navigator.pop(context);
+            },
+            child: Text('Sí'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
   }
 }
 
