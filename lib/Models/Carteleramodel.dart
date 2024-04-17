@@ -1,4 +1,4 @@
-class carteleraModel {
+class CarteleraModel {
   final String title;
   final String director;
   final String imageUrl;
@@ -8,7 +8,7 @@ class carteleraModel {
   bool isFavorite;
   String review;
 
-  carteleraModel({
+  CarteleraModel({
     required this.title,
     required this.director,
     required this.imageUrl,
@@ -17,18 +17,19 @@ class carteleraModel {
     this.categories = const [],
     this.isFavorite = false,
     this.review = '',
-  })
+  });
+
+  // Método para convertir un objeto Movie a un mapa JSON
   Map<String, dynamic> toJson() {
     return {
-      "title" : title,
-      "director" : director,
-      "imagenUrl" : imageUrl,
-      "description" : description,
-      "horario" : horario,
-      "categories" : categories,
-      "isFavorite" : isFavorite,
-      "review" : review,
-      
-         };
+      'title': title,
+      'director': director,
+      'imageUrl': imageUrl,
+      'description': description,
+      'horario': horario,
+      'categories': categories,
+      'isFavorite': isFavorite,
+      'review': review,
+    };
   }
-  }
+}

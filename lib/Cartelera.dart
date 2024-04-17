@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:prueba/Map.dart';
 
 class Movie {
   final String title;
   final String director;
-  final String imageUrl;
+  late final String imageUrl;
   final String description;
   final String horario;
   final List<String> categories;
@@ -25,7 +26,7 @@ class Movie {
 }
 
 class MyApp1 extends StatefulWidget {
-  const MyApp1({super.key});
+  const MyApp1({Key? key});
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -41,26 +42,18 @@ class _MyAppState extends State<MyApp1> {
           'Es una película estadounidense de superhéroes basada en el personaje Spider-Man, de Marvel Comics...',
       horario: '10:00AM - 1:00PM',
       categories: ['aventura', 'estreno', 'accion'],
+      isFavorite: false,
+      review: '',
     ),
     // Add more movies with categories
   ];
 
+
   @override
   void initState() {
     super.initState();
-    // Example of adding more movies when the app starts
-    List<Movie> additionalMovies = [
-      Movie(
-        title: 'Nombre de la película',
-        director: 'Nombre del director',
-        imageUrl: 'ruta/a/la/imagen.jpg',
-        description: 'Descripción de la película',
-        horario: 'Horario de la película',
-        categories: ['Categoría 1', 'Categoría 2'],
-      ),
-      // Add more movies here
-    ];
-    addMovies(additionalMovies);
+    if (movies.isNotEmpty) {
+    }
   }
 
   @override
@@ -83,45 +76,63 @@ class _MyAppState extends State<MyApp1> {
             ),
           ),
         ),
-        body: ListView.builder(
-          itemCount: movies.length,
-          itemBuilder: (context, index) {
-            return Card(
-              elevation: 2.0,
-              margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(16.0),
-                title: Text(
-                  movies[index].title,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 0, 0, 0),
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Director: ${movies[index].director}'),
-                    Text('Horario: ${movies[index].horario}'),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      'Categorías: ${movies[index].categories.join(', ')}',
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 100, 100, 100),
-                        fontSize: 14.0,
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: movies.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 2.0,
+                    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16.0),
+                      title: Text(
+                        movies[index].title,
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Director: ${movies[index].director}'),
+                          Text('Horario: ${movies[index].horario}'),
+                          const SizedBox(height: 4.0),
+                          Text(
+                            'Categorías: ${movies[index].categories.join(', ')}',
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 100, 100, 100),
+                              fontSize: 14.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                      leading: _buildMovieImage(movies[index].imageUrl),
+                      trailing: _buildButtons(context, index),
+                      onTap: () {
+                        _navigateToMovieDetails(context, movies[index]);
+                      },
                     ),
-                  ],
-                ),
-                leading: _buildMovieImage(movies[index].imageUrl),
-                trailing: _buildButtons(context, index),
-                onTap: () {
-                  _navigateToMovieDetails(context, movies[index]);
+                  );
                 },
               ),
-            );
-          },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MapScreen()),
+                  );
+                },
+                child: Text('Volver al mapa'),
+              ),
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _addNewMovie,
@@ -135,7 +146,7 @@ class _MyAppState extends State<MyApp1> {
   Widget _buildMovieImage(String imageUrl) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
-      child: Image.network(
+      child: Image.asset(
         imageUrl,
         width: 50.0,
         height: 50.0,
@@ -189,30 +200,12 @@ class _MyAppState extends State<MyApp1> {
   }
 
   void _navigateToMovieDetails(BuildContext context, Movie movie) {
-    String imageUrl;
-    if (movie.title == 'Spider-Man No Way Home') {
-      imageUrl = 'assets/images/Spiderman.png';
-    } else if (movie.title == 'John Wick 4') {
-      imageUrl = 'assets/images/johnwick2.jpeg';
-    } else {
-      imageUrl = 'default_image_url';
-    }
-
     Navigator.push(
       context,
       MaterialPageRoute(
-         builder: (context) => MovieDetailScreen(
-          movie: movie,
-          imageUrl: imageUrl,
-        ),
+        builder: (context) => MovieDetailScreen(movie: movie),
       ),
     );
-  }
-
-  void addMovies(List<Movie> newMovies) {
-    setState(() {
-      movies.addAll(newMovies);
-    });
   }
 
   void _addNewMovie() async {
@@ -233,9 +226,8 @@ class _MyAppState extends State<MyApp1> {
 
 class MovieDetailScreen extends StatelessWidget {
   final Movie movie;
-  final String imageUrl;
 
-  const MovieDetailScreen({super.key, required this.movie, required this.imageUrl});
+  const MovieDetailScreen({Key? key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +241,7 @@ class MovieDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildMovieImage(imageUrl),
+              _buildMovieImage(movie.imageUrl),
               const SizedBox(height: 16.0),
               Text(
                 'Titulo: ${movie.title}',
@@ -320,7 +312,8 @@ class MovieDetailScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ],),
+            ],
+          ),
         ),
       ),
     );
@@ -342,11 +335,12 @@ class MovieDetailScreen extends StatelessWidget {
 class ReviewScreen extends StatefulWidget {
   final Movie movie;
 
-  const ReviewScreen({super.key, required this.movie});
+  const ReviewScreen({Key? key, required this.movie});
 
   @override
   _ReviewScreenState createState() => _ReviewScreenState();
 }
+
 class _ReviewScreenState extends State<ReviewScreen> {
   final TextEditingController _controller = TextEditingController();
 
@@ -396,10 +390,16 @@ class AddMovieScreen extends StatefulWidget {
 class _AddMovieScreenState extends State<AddMovieScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _directorController = TextEditingController();
-  final TextEditingController _imageUrlController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _horarioController = TextEditingController();
   final List<String> _categories = [];
+  late String _selectedImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedImageUrl = 'assets/images/spiderman1.jpeg'; // Set default image URL
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -422,8 +422,23 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
               decoration: InputDecoration(labelText: 'Director'),
             ),
             SizedBox(height: 16.0),
-            TextField(
-              controller: _imageUrlController,
+            DropdownButtonFormField<String>(
+              value: _selectedImageUrl,
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedImageUrl = value;
+                  });
+                }
+              },
+              items: [
+                'assets/images/spiderman1.jpeg', // Add more image URLs here
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               decoration: InputDecoration(labelText: 'URL de la imagen'),
             ),
             SizedBox(height: 16.0),
@@ -484,14 +499,13 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
   void _saveMovie() {
     if (_titleController.text.isNotEmpty &&
         _directorController.text.isNotEmpty &&
-        _imageUrlController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty &&
         _horarioController.text.isNotEmpty &&
         _categories.isNotEmpty) {
       Movie newMovie = Movie(
         title: _titleController.text,
         director: _directorController.text,
-        imageUrl: _imageUrlController.text,
+        imageUrl: _selectedImageUrl,
         description: _descriptionController.text,
         horario: _horarioController.text,
         categories: List.from(_categories),

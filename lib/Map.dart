@@ -111,6 +111,76 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               showSearchDialog();
             },
           ),
+          IconButton(
+            icon: Icon(Icons.add), // Botón para agregar un nuevo cine
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  TextEditingController nombreController = TextEditingController();
+                  TextEditingController latitudController = TextEditingController();
+                  TextEditingController longitudController = TextEditingController();
+                  
+                  return AlertDialog(
+                    title: Text('Agregar Cine'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: nombreController,
+                          decoration: InputDecoration(labelText: 'Nombre del Cine'),
+                        ),
+                        TextField(
+                          controller: latitudController,
+                          decoration: InputDecoration(labelText: 'Latitud'),
+                          keyboardType: TextInputType.number,
+                        ),
+                        TextField(
+                          controller: longitudController,
+                          decoration: InputDecoration(labelText: 'Longitud'),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Cancelar'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          String nombre = nombreController.text;
+                          double latitud = double.tryParse(latitudController.text) ?? 0.0;
+                          double longitud = double.tryParse(longitudController.text) ?? 0.0;
+                          
+                          if (nombre.isNotEmpty && latitud != 0.0 && longitud != 0.0) {
+                            setState(() {
+                              local.add(Cines(
+                                nombre: nombre,
+                                latitud: latitud,
+                                longitud: longitud,
+                                resenas: [],
+                                peliculaProyectandose: '',
+                                horainicio: '',
+                                imagen: 'assets/images/nuevo_cine.png',
+                                horarios: '',
+                              ));
+                            });
+                            Navigator.of(context).pop();
+                          } else {
+                            // Manejar el caso en el que no se proporcionan todos los datos necesarios
+                          }
+                        },
+                        child: Text('Agregar'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ],
       ),
       drawer: Drawer(
