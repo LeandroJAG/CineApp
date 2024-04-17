@@ -407,8 +407,8 @@ class _MapItemDetails extends StatelessWidget {
               children: [
                 Expanded(
                   child: Container(
-                      width: 120.0,
-                      height: 120.0,
+                      width: 80.0,
+                      height: 80.0,
                       margin: const EdgeInsets.only(top: 20.0),
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.only(left: 20.0),
