@@ -1,28 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/Map.dart';
-import 'package:prueba/Models/Usuario.dart';
-import 'package:prueba/Provider/Registrouser.dart';
-import 'package:prueba/Provider/UserProvider.dart';
 import 'package:prueba/Registe.dart';
-import 'package:prueba/Sharepreference/Sharepreference.dart';
+import 'package:prueba/Provider/UserProvider.dart';
+
+class RoundedInputField extends StatelessWidget {
+  final String hintText;
+  final IconData icon;
+  final ValueChanged<String> onChanged;
+  const RoundedInputField({
+    Key? key,
+    required this.hintText,
+    this.icon = Icons.person,
+    required this.onChanged,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+      width: MediaQuery.of(context).size.width * 0.8,
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 202, 224, 241),
+        borderRadius: BorderRadius.circular(29),
+      ),
+      child: TextField(
+        onChanged: onChanged,
+        cursorColor: Colors.blue,
+        decoration: InputDecoration(
+          icon: Icon(
+            icon,
+            color: Colors.blue,
+          ),
+          hintText: hintText,
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   static const String nombre = 'login';
-    final prefs = PreferenciaUsuario();
-
-  // controladores de edición de texto
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  // método para iniciar sesión
-  void signUserIn(BuildContext context) async {
-    var prefs;
-    await prefs.saveUserData(usernameController.text, passwordController.text);
-    prefs.usuario = usernameController.text;
-    prefs.contrasena = passwordController.text;
-    print(prefs.usuario);
-    Navigator.of(context).pushNamed(MapScreen.nombre);
-  }
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -30,80 +48,179 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? email;
-  String? password;
- // FirebaseProvider  usuarioProvider = FirebaseProvider();
-  AuthenticationServices service = AuthenticationServices();
-  late Future < List<UsuarioModel>> userList;
- @override
-  void initState() {
-    super.initState();
-    userList=service.getAll();
-    
+  late String email;
+  late String password;
+  final _userService = AuthenticationServices();
 
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('CineApp'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.person,
-                size: 100,
-                color: const Color.fromARGB(255, 117, 56, 56),
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Email/Username',
-                  border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(16.0),
+          children: [
+            // Image Container with all corners semi-circular
+            ClipRRect(
+              borderRadius: BorderRadius.circular(30), // Make all corners semi-circular
+              child: Container(
+                width: double.infinity,
+                height: 150, // Ajusta la altura aquí
+                child: Image.asset(
+                  'assets/images/cine.jpg',
+                  fit: BoxFit.cover,
                 ),
-                onSaved: (value) => email = value,
               ),
-              SizedBox(height: 12),
-              TextFormField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+            ),
+            SizedBox(height: 20),
+
+            // Header
+            Column(
+              children: [
+                Text(
+                  '🎬 Bienvenido',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                onSaved: (value) => password = value,
+                Text(
+                  '¡Desbloquea experiencias cinematográficas!',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+
+            // Form
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    RoundedInputField(
+                      hintText: "Email",
+                      onChanged: (value) {
+                        email = value;
+                      },
+                    ),
+                    SizedBox(height: 12),
+                    RoundedInputField(
+                      hintText: "Password",
+                      onChanged: (value) {
+                        password = value;
+                      },
+                      icon: Icons.lock,
+                    ),
+                    SizedBox(height: 20),
+                    // Login button
+                    SizedBox(
+                      width: 200.0,
+                      height: 50.0,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            final success = await _userService.signIn(email, password);
+                            if (success) {
+                              Navigator.pushNamed(context, MapScreen.nombre);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Incorrect email or password'),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 202, 224, 241),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: Text(
+                          'INICIAR',
+                          style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 12, 27, 39)),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    
-                  //  usuarioProvider.login(email!, password!);
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MapScreen()),
-                    );
-                  }
-                },
-                child: Text('INICIAR'),
-              ),
-              SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegistrationScreen()),
-                  );
-                },
-                child: Text('NO TIENES CUENTA? DALE AQUÍ'),
-              ),
-            ],
-          ),
+            ),
+
+            // Divider with "Únete" text and split horizontal line
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Divider(
+                    height: 20,
+                    thickness: 2,
+                    color: Colors.blue,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    'Únete',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+                  ),
+                ),
+                Expanded(
+                  child: Divider(
+                    height: 20,
+                    thickness: 2,
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
+            ),
+
+            // Register and local user options
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RegistrationScreen()),
+                        );
+                      },
+                      icon: Icon(Icons.person_add_alt_1_outlined, color: Colors.blue),
+                      iconSize: 50,
+                    ),
+                    Text(
+                      'Registrarse',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MapScreen()),
+                        );
+                        // Add functionality for local user
+                      },
+                      icon: Icon(Icons.person_outline, color: Colors.blue),
+                      iconSize: 50,
+                    ),
+                    Text(
+                      'Usuario local',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

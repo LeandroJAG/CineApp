@@ -83,4 +83,8 @@ class UsuarioModel {
       contrasena: map['contrasena'],
     );
   }
+
+  static fromJsonListUserAuthenticate(jsonData) {}
+
+  static fromJsonList(jsonData) {}
 }

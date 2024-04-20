@@ -40,6 +40,7 @@ dependencies:
   firebase_auth:
   flutter_bloc: ^7.0.0
   equatable: ^2.0.3
+  google_fonts: ^2.0.0 
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -83,6 +84,10 @@ flutter:
     - assets/images/spiderman1.jpeg
     - assets/images/johnwick2.jpeg
     - assets/images/cine.jpg
+    - assets/images/registro.png
+    - assets/images/userlocal.jpg
+    - assets/images/descarga.png
+    - assets/images/registrocine.jpeg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

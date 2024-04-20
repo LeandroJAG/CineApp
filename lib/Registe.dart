@@ -22,51 +22,67 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Registro'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.push(
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.blue, // Aplicar color azul al tema
+        hintColor: Colors.blue, // Color de acento
+        inputDecorationTheme: InputDecorationTheme(
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue), // Color para el borde cuando está enfocado
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue.withOpacity(0.5)), // Color para el borde cuando no está enfocado
+          ),
+        ),
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Registro'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => LoginScreen(),
                 ),
               );
-          },
+            },
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: formKey,
-          child: ListView(
-            children: [
-              Icon(
-                Icons.person,
-                size: 84,
-                color: Colors.black,
-              ),
-              SizedBox(height: 20),
-              _buildTextFormField(_firstNameController, 'Nombre',
-                  'ingresa tu nombre'),
-              _buildTextFormField(_lastNameController, 'Apellido',
-                  'Ingresa tu apellido'),
-              _buildTextFormField(_emailController, 'Correo Electrónico', 'Ingresa tu correo'),
-              _buildTextFormField(_passwordController, 'Contraseña',
-                  'Ingresa tu contraseña',
-                  obscureText: true),
-              _buildTextFormField(_addressController, 'Dirección',
-                  'Ingresa tu dirección'),
-              _buildTextFormField(_phoneController, 'Teléfono',
-                  'Ingresa tu número de teléfono'),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submit,
-                child: const Text('Registrar'),
-              ),
-            ],
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: formKey,
+            child: ListView(
+              children: [
+                Image.asset(
+                  'assets/images/registro1.png',
+                  height: 84,
+                  width: 84,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: 20),
+                _buildTextFormField(_firstNameController, 'Nombre',
+                    'ingresa tu nombre'),
+                _buildTextFormField(_lastNameController, 'Apellido',
+                    'Ingresa tu apellido'),
+                _buildTextFormField(_emailController, 'Correo Electrónico',
+                    'Ingresa tu correo'),
+                _buildTextFormField(_passwordController, 'Contraseña',
+                    'Ingresa tu contraseña',
+                    obscureText: true),
+                _buildTextFormField(_addressController, 'Dirección',
+                    'Ingresa tu dirección'),
+                _buildTextFormField(_phoneController, 'Teléfono',
+                    'Ingresa tu número de teléfono'),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _submit,
+                  child: const Text('Registrar'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -110,7 +126,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       usuarioProvider.createUsuario(usuario);
 
-      Navigator.push(context,
+      Navigator.push(
+        context,
         MaterialPageRoute(
           builder: (context) => LoginScreen(),
         ),
