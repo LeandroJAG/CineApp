@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/Map.dart';
 import 'package:prueba/Models/Carteleramodel.dart';
+import 'package:prueba/Provider/Pelicula.dart';
 
 class MyApp1 extends StatefulWidget {
   const MyApp1({Key? key});
+ static const String nombre = 'cartelera';
+
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp1> {
+
+ 
   final List<Movie> movies = [
     Movie(
       title: 'Spider-Man No Way Home',
@@ -339,7 +344,8 @@ class MovieDetailScreen extends StatelessWidget {
 class ReviewScreen extends StatefulWidget {
   final Movie movie;
 
-  const ReviewScreen({Key? key, required this.movie});
+   ReviewScreen({Key? key, required this.movie});
+
 
   @override
   _ReviewScreenState createState() => _ReviewScreenState();
@@ -392,6 +398,8 @@ class AddMovieScreen extends StatefulWidget {
 }
 
 class _AddMovieScreenState extends State<AddMovieScreen> {
+
+  final  service=ProviderPelicula();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _directorController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -514,7 +522,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
         horario: _horarioController.text,
         categories: List.from(_categories),
       );
-
+ service.save(newMovie);
       Navigator.pop(context, newMovie);
     } else {
       showDialog(

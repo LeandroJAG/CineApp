@@ -50,7 +50,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   late String email;
   late String password;
-  final _userService = AuthenticationServices();
+  bool isLoading = false; // Variable para indicar si está cargando
+  AuthenticationServices au = AuthenticationServices();
 
   @override
   Widget build(BuildContext context) {
@@ -116,18 +117,33 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 200.0,
                       height: 50.0,
                       child: ElevatedButton(
-                        onPressed: () async {
+                        onPressed: isLoading ? null : () async {
                           if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            final success = await _userService.signIn(email, password);
-                            if (success) {
-                              Navigator.pushNamed(context, MapScreen.nombre);
-                            } else {
+                            setState(() {
+                              isLoading = true; // Indicar que se está cargando
+                            });
+                            try {
+                              final success = await au.authenticate(email, password);
+                              if (success == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Incorrect email or password'),
+                                  ),
+                                );
+                              } else {
+                                Navigator.of(context).pushNamed(MapScreen.nombre);
+                              }
+                            } catch (e) {
+                              print(e);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Incorrect email or password'),
+                                  content: Text(e.toString()),
                                 ),
                               );
+                            } finally {
+                              setState(() {
+                                isLoading = false; 
+                              });
                             }
                           }
                         },
@@ -137,10 +153,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(30.0),
                           ),
                         ),
-                        child: Text(
-                          'INICIAR',
-                          style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 12, 27, 39)),
-                        ),
+                        child: isLoading
+                            ? CircularProgressIndicator() // Mostrar un indicador de carga si está cargando
+                            : Text(
+                                'INICIAR',
+                                style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 12, 27, 39)),
+                              ),
                       ),
                     ),
                     SizedBox(height: 20),
