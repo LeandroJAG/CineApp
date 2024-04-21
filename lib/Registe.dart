@@ -5,7 +5,7 @@ import 'package:prueba/Provider/Registrouser.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
-
+static const String nombre = 'registe';
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }

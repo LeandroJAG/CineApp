@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prueba/Login.dart';
 
 class WelcomeScreen extends StatelessWidget {
+  static const String nombre = 'welcome';
   @override
   Widget build(BuildContext context) {
     return Scaffold(

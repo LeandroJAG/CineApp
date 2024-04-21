@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class FirebaseProvider {
+   
   final String _endpoint =
       "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
 
@@ -20,6 +21,7 @@ class FirebaseProvider {
 }
 
 class AuthenticationServices {
+ 
   final FirebaseProvider _firebaseProvider = FirebaseProvider();
 
   Future<bool> signIn(String email, String password) async {
@@ -57,4 +59,33 @@ class AuthenticationServices {
       throw Exception("Error $e");
     }
   }
+    Future<UsuarioModel?> authenticate(String username, String password) async {
+      print("entro al provider");
+   
+    try {
+      final url = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        //print(response.body);
+        String body = utf8.decode(response.bodyBytes);
+        final jsonData = jsonDecode(body);
+        
+        final authenticatedUser =
+            User.fromJsonListUserAuthenticate(jsonData, username, password);
+            if (authenticatedUser.usersAuthenticated==null) {
+            
+             throw Exception("Usuario no registrado");
+            }
+          
+      
+        return authenticatedUser.usersAuthenticated;
+      } else {
+        throw Exception("Ocurrió algo ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Error $e");
+    }
+  }
+
+
 }

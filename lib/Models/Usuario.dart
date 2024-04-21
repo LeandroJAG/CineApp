@@ -1,6 +1,6 @@
 class User {
   List<UsuarioModel> userList = [];
-  List<UsuarioModel> usersAuthenticatedList = [];
+  UsuarioModel? usersAuthenticated; 
   User.fromJsonList(json) {
     if (json == null) {
       return;
@@ -21,20 +21,22 @@ class User {
   }
     User.fromJsonListUserAuthenticate(mapList, String username, String password) {
     if (mapList == null || username == "" || password == "") {
-    
-      return;
+    throw Exception("Por favor verificar");
     } else {
+    //  print(mapList);
+   //   print(password);
       mapList.forEach((key, val) {
+         // print(val);
         try {
           final value = UsuarioModel.fromMap(val);
           if (value.correo == username && value.contrasena == password) {
             value.id=key;
-            usersAuthenticatedList.add(value);
+           usersAuthenticated=value;
           } else {
            
           }
         } catch (e) {
-          throw Exception("Usuario no encontrado o incorrectos");
+          throw Exception("Error de servidor ");
         }
       });
     }

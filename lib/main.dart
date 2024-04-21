@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:prueba/Cartelera.dart';
+import 'package:prueba/Login.dart';
+import 'package:prueba/Map.dart';
+import 'package:prueba/Registe.dart';
 import 'package:prueba/Sharepreference/Sharepreference.dart';
 import 'package:prueba/Welcome.dart';
 
@@ -18,6 +22,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      initialRoute: WelcomeScreen.nombre,
+      routes: {
+        LoginScreen.nombre: (context) => LoginScreen(),
+        MyApp1.nombre: (context) => const MyApp1(),
+        MapScreen.nombre: (context) => const MapScreen(),
+        RegistrationScreen.nombre: (context) => const RegistrationScreen(),
+        WelcomeScreen.nombre: (context) => WelcomeScreen(),
+      },
       home: WelcomeScreen(),
     );
   }

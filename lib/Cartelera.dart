@@ -4,7 +4,7 @@ import 'package:prueba/Models/Carteleramodel.dart';
 
 class MyApp1 extends StatefulWidget {
   const MyApp1({Key? key});
-
+ static const String nombre = 'cartelera';
   @override
   _MyAppState createState() => _MyAppState();
 }
