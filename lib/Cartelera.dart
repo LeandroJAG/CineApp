@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/Map.dart';
 import 'package:prueba/Models/Carteleramodel.dart';
+import 'package:http/http.dart' as http;
 import 'package:prueba/Provider/Pelicula.dart';
 
 class MyApp1 extends StatefulWidget {
@@ -206,31 +207,43 @@ class _MyAppState extends State<MyApp1> {
   }
 
   void _deleteMovie(int index) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Confirmar eliminación'),
-        content: Text('¿Estás seguro de que deseas eliminar "${movies[index].title}"?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                movies.removeAt(index);
-              });
-              Navigator.pop(context);
-            },
-            child: Text('Sí'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Cancelar'),
-          ),
-        ],
-      ),
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Confirmar eliminación'),
+      content: Text('¿Estás seguro de que deseas eliminar "${movies[index].title}"?'),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            // Eliminar la película de la base de datos
+            try {
+              final url = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula/$index.json";
+              final response = await http.delete(Uri.parse(url));
+              if (response.statusCode == 200) {
+                // Si la eliminación en la base de datos es exitosa, eliminarla también de la lista local
+                setState(() {
+                  movies.removeAt(index);
+                });
+              } else {
+                throw Exception('Error ${response.statusCode}');
+              }
+            } catch (e) {
+              print('Error al eliminar la película: $e');
+            }
+            Navigator.pop(context);
+          },
+          child: Text('Sí'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Cancelar'),
+        ),
+      ],
+    ),
+  );
+}
 }
 
 class MovieDetailScreen extends StatelessWidget {

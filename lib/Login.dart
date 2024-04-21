@@ -48,8 +48,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  late String email;
-  late String password;
+  String email = '';
+  String password = '';
   bool isLoading = false; // Variable para indicar si está cargando
   AuthenticationServices au = AuthenticationServices();
 
@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (success == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Incorrect email or password'),
+                                    content: Text('Usuario o contraseña incorrectos'),
                                   ),
                                 );
                               } else {
@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               print(e);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(e.toString()),
+                                  content: Text('Usuario o contraseña incorrectos'),
                                 ),
                               );
                             } finally {

@@ -8,7 +8,7 @@ class ProviderPelicula {
 
   Future<String> save(Movie data) async {
     try {
-      final url = "$_endpoint/Residente.json";
+      final url = "$_endpoint.json";
       final response = await http.post(Uri.parse(url), body: data.toJson());
       if (response.statusCode == 200) {
         String body = utf8.decode(response.bodyBytes);
