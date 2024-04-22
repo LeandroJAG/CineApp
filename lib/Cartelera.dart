@@ -484,7 +484,15 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 }
               },
               items: [
-                'assets/images/spiderman1.jpeg', // Add more image URLs here
+                'assets/images/troya.jpeg',
+                'assets/images/thehungergame.png',
+                'assets/images/poster-los-vengadores.jpg',
+                'assets/images/jumanji.jpg',
+                'assets/images/avatar.png',
+                'assets/images/Spiderman.png',
+                'assets/images/johnwick.jpeg',
+                'assets/images/spiderman1.jpeg',
+                'assets/images/johnwick2.jpeg',
               ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,

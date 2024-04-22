@@ -22,4 +22,8 @@ class ProviderPelicula {
       throw Exception("Error $e");
     }
   }
+
+  getMovies() {}
+
+  deleteMovie(int indexOf) {}
 }

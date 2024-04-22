@@ -88,6 +88,11 @@ flutter:
     - assets/images/userlocal.jpg
     - assets/images/descarga.png
     - assets/images/registrocine.jpeg
+    - assets/images/troya.jpeg
+    - assets/images/thehungergame.png
+    - assets/images/poster-los-vengadores.jpg
+    - assets/images/jumanji.jpg
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

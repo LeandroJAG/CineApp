@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: WelcomeScreen.nombre,
+      initialRoute: LoginScreen.nombre,
       routes: {
         LoginScreen.nombre: (context) => LoginScreen(),
         MyApp1.nombre: (context) => const MyApp1(),
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         RegistrationScreen.nombre: (context) => const RegistrationScreen(),
         WelcomeScreen.nombre: (context) => WelcomeScreen(),
       },
-      home: WelcomeScreen(),
+      home: LoginScreen(),
     );
   }
 }
