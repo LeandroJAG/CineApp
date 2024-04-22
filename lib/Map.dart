@@ -105,13 +105,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              // Función para mostrar el cuadro de diálogo de búsqueda
-              showSearchDialog();
-            },
-          ),
-          IconButton(
             icon: Icon(Icons.add), // Botón para agregar un nuevo cine
             onPressed: () {
               showDialog(

@@ -6,16 +6,13 @@ import 'package:prueba/Provider/Pelicula.dart';
 
 class MyApp1 extends StatefulWidget {
   const MyApp1({Key? key});
- static const String nombre = 'cartelera';
-
+  static const String nombre = 'cartelera';
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp1> {
-
- 
   final List<Movie> movies = [
     Movie(
       title: 'Spider-Man No Way Home',
@@ -43,7 +40,7 @@ class _MyAppState extends State<MyApp1> {
       title: 'Cartelera',
       theme: ThemeData(
         primarySwatch: Colors.grey,
-        scaffoldBackgroundColor: Colors.white, // Cambio de fondo a blanco
+        scaffoldBackgroundColor: const Color.fromARGB(255, 210, 226, 240), // Cambio de fondo a azul claro
       ),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -207,43 +204,43 @@ class _MyAppState extends State<MyApp1> {
   }
 
   void _deleteMovie(int index) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Confirmar eliminación'),
-      content: Text('¿Estás seguro de que deseas eliminar "${movies[index].title}"?'),
-      actions: [
-        TextButton(
-          onPressed: () async {
-            // Eliminar la película de la base de datos
-            try {
-              final url = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula/$index.json";
-              final response = await http.delete(Uri.parse(url));
-              if (response.statusCode == 200) {
-                // Si la eliminación en la base de datos es exitosa, eliminarla también de la lista local
-                setState(() {
-                  movies.removeAt(index);
-                });
-              } else {
-                throw Exception('Error ${response.statusCode}');
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confirmar eliminación'),
+        content: Text('¿Estás seguro de que deseas eliminar "${movies[index].title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              // Eliminar la película de la base de datos
+              try {
+                final url = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula/$index.json";
+                final response = await http.delete(Uri.parse(url));
+                if (response.statusCode == 200) {
+                  // Si la eliminación en la base de datos es exitosa, eliminarla también de la lista local
+                  setState(() {
+                    movies.removeAt(index);
+                  });
+                } else {
+                  throw Exception('Error ${response.statusCode}');
+                }
+              } catch (e) {
+                print('Error al eliminar la película: $e');
               }
-            } catch (e) {
-              print('Error al eliminar la película: $e');
-            }
-            Navigator.pop(context);
-          },
-          child: Text('Sí'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Cancelar'),
-        ),
-      ],
-    ),
-  );
-}
+              Navigator.pop(context);
+            },
+            child: Text('Sí'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class MovieDetailScreen extends StatelessWidget {
@@ -357,8 +354,7 @@ class MovieDetailScreen extends StatelessWidget {
 class ReviewScreen extends StatefulWidget {
   final Movie movie;
 
-   ReviewScreen({Key? key, required this.movie});
-
+  ReviewScreen({Key? key, required this.movie});
 
   @override
   _ReviewScreenState createState() => _ReviewScreenState();
@@ -378,6 +374,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildMovieImage(widget.movie.imageUrl), // Aquí se muestra la imagen de la película
+            const SizedBox(height: 16.0),
             Text(
               'Película: ${widget.movie.title}',
               style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -389,6 +387,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
               decoration: const InputDecoration(
                 hintText: 'Escribe tu reseña aquí...',
                 border: OutlineInputBorder(),
+                filled: true,
+                fillColor: const Color.fromARGB(255, 202, 224, 240), // Fondo azul claro
               ),
             ),
             const SizedBox(height: 16.0),
@@ -403,6 +403,18 @@ class _ReviewScreenState extends State<ReviewScreen> {
       ),
     );
   }
+
+  Widget _buildMovieImage(String imageUrl) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16.0),
+      child: Image.asset(
+        imageUrl,
+        width: double.infinity,
+        height: 200.0,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
 }
 
 class AddMovieScreen extends StatefulWidget {
@@ -411,8 +423,7 @@ class AddMovieScreen extends StatefulWidget {
 }
 
 class _AddMovieScreenState extends State<AddMovieScreen> {
-
-  final  service=ProviderPelicula();
+  final service = ProviderPelicula();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _directorController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -439,12 +450,28 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
           children: [
             TextField(
               controller: _titleController,
-              decoration: InputDecoration(labelText: 'Título'),
+              decoration: InputDecoration(
+                labelText: 'Título',
+                filled: true,
+                fillColor: const Color.fromARGB(255, 202, 224, 240), // Fondo azul claro
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none, // Sin bordes
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _directorController,
-              decoration: InputDecoration(labelText: 'Director'),
+              decoration: InputDecoration(
+                labelText: 'Director',
+                filled: true,
+                fillColor: const Color.fromARGB(255, 202, 224, 240), // Fondo azul claro
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none, // Sin bordes
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
             SizedBox(height: 16.0),
             DropdownButtonFormField<String>(
@@ -464,17 +491,41 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                   child: Text(value),
                 );
               }).toList(),
-              decoration: InputDecoration(labelText: 'URL de la imagen'),
+              decoration: InputDecoration(
+                labelText: 'URL de la imagen',
+                filled: true,
+                fillColor: Colors.blue[50], // Fondo azul claro
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none, // Sin bordes
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Descripción'),
+              decoration: InputDecoration(
+                labelText: 'Descripción',
+                filled: true,
+                fillColor: Colors.blue[50], // Fondo azul claro
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none, // Sin bordes
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _horarioController,
-              decoration: InputDecoration(labelText: 'Horario'),
+              decoration: InputDecoration(
+                labelText: 'Horario',
+                filled: true,
+                fillColor: Colors.blue[50], // Fondo azul claro
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none, // Sin bordes
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
             SizedBox(height: 16.0),
             Text('Categorías'),
@@ -535,7 +586,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
         horario: _horarioController.text,
         categories: List.from(_categories),
       );
- service.save(newMovie);
+      service.save(newMovie);
       Navigator.pop(context, newMovie);
     } else {
       showDialog(

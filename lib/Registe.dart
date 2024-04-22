@@ -57,7 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: ListView(
               children: [
                 Image.asset(
-                  'assets/images/registro1.png',
+                  'assets/images/cine.jpg',
                   height: 84,
                   width: 84,
                   fit: BoxFit.contain,

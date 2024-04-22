@@ -231,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       iconSize: 50,
                     ),
                     Text(
-                      'Usuario local',
+                      'Modo Invitado',
                       style: TextStyle(fontSize: 12),
                     ),
                   ],
