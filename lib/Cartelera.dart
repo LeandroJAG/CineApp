@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/Map.dart';
+
 import 'package:prueba/Models/Carteleramodel.dart';
 import 'package:http/http.dart' as http;
 import 'package:prueba/Provider/Pelicula.dart';
@@ -13,6 +13,7 @@ class MyApp1 extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp1> {
+ 
   final List<Movie> movies = [
     Movie(
       title: 'Spider-Man No Way Home',
@@ -21,128 +22,146 @@ class _MyAppState extends State<MyApp1> {
       description:
           'Es una película estadounidense de superhéroes basada en el personaje Spider-Man, de Marvel Comics...',
       horario: '10:00AM - 1:00PM',
-      categories: ['aventura', 'estreno', 'accion'],
+      categories: 'aventura',
       isFavorite: false,
       review: '',
     ),
     // Add more movies with categories
   ];
+  late Future<List<Movie>> MovieMList;
 
   @override
   void initState() {
+    MovieMList = ProviderPelicula.getAll();
     super.initState();
-    if (movies.isNotEmpty) {}
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cartelera',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 210, 226, 240), // Cambio de fondo a azul claro
-      ),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Cartelera de Películas',
-            style: TextStyle(
-              color: Color.fromARGB(255, 0, 0, 0),
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
+    return FutureBuilder<List<Movie>>(
+      future: MovieMList,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else if (snapshot.hasData) {
+          List<Movie> movieMList = snapshot.data!;
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'Cartelera de Películas',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 0, 0, 0),
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 2.0,
-                    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(16.0),
-                      title: Text(
-                        movies[index].title,
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+            body: ListView.builder(
+              itemCount: movieMList.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Lista ${index + 1}',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
                       ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Director: ${movies[index].director}'),
-                          Text('Horario: ${movies[index].horario}'),
-                          const SizedBox(height: 4.0),
-                          Text(
-                            'Categorías: ${movies[index].categories.join(', ')}',
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 100, 100, 100),
-                              fontSize: 14.0,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: movieMList.length,
+                      itemBuilder: (context, idx) {
+                        Movie movie = movieMList[idx];
+                        return Card(
+                          elevation: 2.0,
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16.0),
+                            title: Text(
+                              movie.title,
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      leading: _buildMovieImage(movies[index].imageUrl),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              movies[index].isFavorite ? Icons.favorite : Icons.favorite_border,
-                              color: Colors.red,
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Director: ${movie.director}'),
+                                Text('Horario: ${movie.horario}'),
+                                const SizedBox(height: 4.0),
+                                Text(
+                                  'Categorías: ${movie.categories}',
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 100, 100, 100),
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                              ],
                             ),
-                            onPressed: () {
-                              _toggleFavorite(index);
+                            leading: _buildMovieImage(movie.imageUrl),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    movie.isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    _toggleFavorite(index);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.rate_review),
+                                  onPressed: () {
+                                    _openReviewScreen(context, movie);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    _deleteMovie(index);
+                                  },
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              _navigateToMovieDetails(context, movie);
                             },
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.rate_review),
-                            onPressed: () {
-                              _openReviewScreen(context, movies[index]);
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              _deleteMovie(index);
-                            },
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        _navigateToMovieDetails(context, movies[index]);
+                        );
                       },
                     ),
-                  );
-                },
-              ),
+                  ],
+                );
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MapScreen()),
-                  );
-                },
-                child: Text('Volver al mapa'),
-              ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: _addNewMovie,
+              tooltip: 'Agregar película',
+              child: Icon(Icons.add),
             ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _addNewMovie,
-          tooltip: 'Agregar película',
-          child: Icon(Icons.add),
-        ),
-      ),
+          );
+        } else {
+          return Center(
+            child: Text('No se encontraron datos.'),
+          );
+        }
+      },
     );
   }
 
@@ -208,13 +227,15 @@ class _MyAppState extends State<MyApp1> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Confirmar eliminación'),
-        content: Text('¿Estás seguro de que deseas eliminar "${movies[index].title}"?'),
+        content: Text(
+            '¿Estás seguro de que deseas eliminar "${movies[index].title}"?'),
         actions: [
           TextButton(
             onPressed: () async {
               // Eliminar la película de la base de datos
               try {
-                final url = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula/$index.json";
+                final url =
+                    "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula/$index.json";
                 final response = await http.delete(Uri.parse(url));
                 if (response.statusCode == 200) {
                   // Si la eliminación en la base de datos es exitosa, eliminarla también de la lista local
@@ -315,7 +336,9 @@ class MovieDetailScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                movie.review.isNotEmpty ? movie.review : 'No hay reseña disponible.',
+                movie.review.isNotEmpty
+                    ? movie.review
+                    : 'No hay reseña disponible.',
                 style: const TextStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
                   fontSize: 16.0,
@@ -324,7 +347,7 @@ class MovieDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               Text(
-                'Categorías: ${movie.categories.join(', ')}',
+                'Categorías: ${movie.categories}',
                 style: const TextStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
                   fontSize: 16.0,
@@ -374,11 +397,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildMovieImage(widget.movie.imageUrl), // Aquí se muestra la imagen de la película
+            _buildMovieImage(widget
+                .movie.imageUrl), // Aquí se muestra la imagen de la película
             const SizedBox(height: 16.0),
             Text(
               'Película: ${widget.movie.title}',
-              style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16.0),
             TextField(
@@ -388,7 +413,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 hintText: 'Escribe tu reseña aquí...',
                 border: OutlineInputBorder(),
                 filled: true,
-                fillColor: const Color.fromARGB(255, 202, 224, 240), // Fondo azul claro
+                fillColor: const Color.fromARGB(
+                    255, 202, 224, 240), // Fondo azul claro
               ),
             ),
             const SizedBox(height: 16.0),
@@ -434,7 +460,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedImageUrl = 'assets/images/spiderman1.jpeg'; // Set default image URL
+    _selectedImageUrl =
+        'assets/images/spiderman1.jpeg'; // Set default image URL
   }
 
   @override
@@ -453,7 +480,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
               decoration: InputDecoration(
                 labelText: 'Título',
                 filled: true,
-                fillColor: const Color.fromARGB(255, 202, 224, 240), // Fondo azul claro
+                fillColor: const Color.fromARGB(
+                    255, 202, 224, 240), // Fondo azul claro
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none, // Sin bordes
                   borderRadius: BorderRadius.circular(8.0),
@@ -466,7 +494,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
               decoration: InputDecoration(
                 labelText: 'Director',
                 filled: true,
-                fillColor: const Color.fromARGB(255, 202, 224, 240), // Fondo azul claro
+                fillColor: const Color.fromARGB(
+                    255, 202, 224, 240), // Fondo azul claro
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none, // Sin bordes
                   borderRadius: BorderRadius.circular(8.0),
@@ -592,7 +621,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
         imageUrl: _selectedImageUrl,
         description: _descriptionController.text,
         horario: _horarioController.text,
-        categories: List.from(_categories),
+        categories: 'Accion ',
       );
       service.save(newMovie);
       Navigator.pop(context, newMovie);
@@ -601,7 +630,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text('Por favor complete todos los campos y seleccione al menos una categoría.'),
+          content: Text(
+              'Por favor complete todos los campos y seleccione al menos una categoría.'),
           actions: [
             TextButton(
               onPressed: () {

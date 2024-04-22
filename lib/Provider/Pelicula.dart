@@ -23,7 +23,25 @@ class ProviderPelicula {
     }
   }
 
-  getMovies() {}
+   static Future<List<Movie>> getAll() async {
+    try {
+      final String _endpoint =
+          "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula.json";
+      final response = await http.get(Uri.parse(_endpoint));
+      if (response.statusCode == 200) {
+        print("entro");
+        String body = utf8.decode(response.bodyBytes);
+        final jsonData = jsonDecode(body);
+        final  listData = MovieM.fromJsonList(jsonData);
+        print("despues ñlist  ");
+        //state = listData.userList;
+        return listData.movieList;
+      } else {
+        throw Exception("Ocurrió algo ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Error $e");
+    }
+  }
 
-  deleteMovie(int indexOf) {}
 }
