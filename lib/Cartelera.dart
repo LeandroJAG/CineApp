@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prueba/Models/Carteleramodel.dart';
 import 'package:http/http.dart' as http;
 import 'package:prueba/Provider/Pelicula.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 class MyApp1 extends StatefulWidget {
   const MyApp1({Key? key});
   static const String nombre = 'cartelera';
@@ -166,6 +166,7 @@ class _MyAppState extends State<MyApp1> {
   }
 
   Widget _buildMovieImage(String imageUrl) {
+    print('imageUrl $imageUrl');
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
       child: Image.asset(
@@ -430,17 +431,19 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
-  Widget _buildMovieImage(String imageUrl) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16.0),
-      child: Image.asset(
-        imageUrl,
-        width: double.infinity,
-        height: 200.0,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
+ Widget _buildMovieImage(String imageUrl) {
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(8.0),
+    child: CachedNetworkImage(
+      imageUrl: imageUrl,
+      width: 50.0,
+      height: 50.0,
+      fit: BoxFit.cover,
+      placeholder: (context, url) => CircularProgressIndicator(),
+      errorWidget: (context, url, error) => Icon(Icons.error),
+    ),
+  );
+}
 }
 
 class AddMovieScreen extends StatefulWidget {

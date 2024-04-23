@@ -12,7 +12,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/cine.jpg'), 
+            image: AssetImage('assets/images/cine.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -25,7 +25,7 @@ class WelcomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 134, 133, 133), 
+                  color: const Color.fromARGB(255, 134, 133, 133),
                 ),
               ),
               SizedBox(height: 10),
@@ -34,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 134, 133, 133), 
+                  color: const Color.fromARGB(255, 134, 133, 133),
                 ),
               ),
               SizedBox(height: 10),
@@ -43,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 134, 133, 133), 
+                  color: const Color.fromARGB(255, 134, 133, 133),
                 ),
               ),
               SizedBox(height: 50),

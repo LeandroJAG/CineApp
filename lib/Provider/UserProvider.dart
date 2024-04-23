@@ -46,7 +46,7 @@ class AuthenticationServices {
           "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
       final response = await http.get(Uri.parse(_endpoint));
       if (response.statusCode == 200) {
-        print("entro");
+       // print("entro");
         String body = utf8.decode(response.bodyBytes);
         final jsonData = jsonDecode(body);
         final listData = User.fromJsonList(jsonData);
