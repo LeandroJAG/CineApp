@@ -4,6 +4,7 @@ import 'package:prueba/Models/Carteleramodel.dart';
 import 'package:http/http.dart' as http;
 import 'package:prueba/Provider/Pelicula.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
 class MyApp1 extends StatefulWidget {
   const MyApp1({Key? key});
   static const String nombre = 'cartelera';
@@ -13,7 +14,6 @@ class MyApp1 extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp1> {
- 
   final List<Movie> movies = [
     Movie(
       title: 'Spider-Man No Way Home',
@@ -37,133 +37,117 @@ class _MyAppState extends State<MyApp1> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Movie>>(
-      future: MovieMList,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else if (snapshot.hasData) {
-          List<Movie> movieMList = snapshot.data!;
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text(
-                'Cartelera de Películas',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
+Widget build(BuildContext context) {
+  return FutureBuilder<List<Movie>>(
+    future: MovieMList,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      } else if (snapshot.hasError) {
+        return Center(
+          child: Text('Error: ${snapshot.error}'),
+        );
+      } else if (snapshot.hasData) {
+        List<Movie>? movieMList = snapshot.data;
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              'Cartelera de Películas',
+              style: TextStyle(
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            body: ListView.builder(
-              itemCount: movieMList.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Lista ${index + 1}',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
+          ),
+          body: ListView.builder(
+            itemCount: movieMList?.length ?? 0,
+            itemBuilder: (context, index) {
+              Movie movie = movieMList![index];
+              return Card(
+                elevation: 2.0,
+                margin: const EdgeInsets.symmetric(
+                  vertical: 8.0,
+                  horizontal: 16.0,
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16.0),
+                  title: Text(
+                    movie.title ?? "",
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Director: ${movie.director}'),
+                      Text('Horario: ${movie.horario}'),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        'Categorías: ${movie.categories}',
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 100, 100, 100),
+                          fontSize: 14.0,
+                        ),
                       ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: movieMList.length,
-                      itemBuilder: (context, idx) {
-                        Movie movie = movieMList[idx];
-                        return Card(
-                          elevation: 2.0,
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 16.0),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(16.0),
-                            title: Text(
-                              movie.title,
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Director: ${movie.director}'),
-                                Text('Horario: ${movie.horario}'),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  'Categorías: ${movie.categories}',
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(255, 100, 100, 100),
-                                    fontSize: 14.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            leading: _buildMovieImage(movie.imageUrl),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    movie.isFavorite
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color: Colors.red,
-                                  ),
-                                  onPressed: () {
-                                    _toggleFavorite(index);
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.rate_review),
-                                  onPressed: () {
-                                    _openReviewScreen(context, movie);
-                                  },
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {
-                                    _deleteMovie(index);
-                                  },
-                                ),
-                              ],
-                            ),
-                            onTap: () {
-                              _navigateToMovieDetails(context, movie);
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: _addNewMovie,
-              tooltip: 'Agregar película',
-              child: Icon(Icons.add),
-            ),
-          );
-        } else {
-          return Center(
-            child: Text('No se encontraron datos.'),
-          );
-        }
-      },
-    );
-  }
+                    ],
+                  ),
+                  leading: _buildMovieImage(movie.imageUrl ?? ""),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          movie.isFavorite ?? false
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          _toggleFavorite(index);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.rate_review),
+                        onPressed: () {
+                          _openReviewScreen(context, movie);
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          _deleteMovie(index);
+                        },
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    _navigateToMovieDetails(context, movie);
+                  },
+                ),
+              );
+            },
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: _addNewMovie,
+            tooltip: 'Agregar película',
+            child: Icon(Icons.add),
+          ),
+        );
+      } else {
+        return Center(
+          child: Text('No se encontraron datos.'),
+        );
+      }
+    },
+  );
+}
+
 
   Widget _buildMovieImage(String imageUrl) {
     print('imageUrl $imageUrl');
@@ -180,7 +164,9 @@ class _MyAppState extends State<MyApp1> {
 
   void _toggleFavorite(int index) {
     setState(() {
-      movies[index].isFavorite = !movies[index].isFavorite;
+      if (movies[index].isFavorite != null) {
+        movies[index].isFavorite = !(movies[index].isFavorite!);
+      }
     });
   }
 
@@ -274,7 +260,7 @@ class MovieDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(movie.title),
+        title: Text(movie.title ?? ""),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -282,7 +268,7 @@ class MovieDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildMovieImage(movie.imageUrl),
+              _buildMovieImage(movie.imageUrl ?? ""),
               const SizedBox(height: 16.0),
               Text(
                 'Titulo: ${movie.title}',
@@ -320,7 +306,7 @@ class MovieDetailScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                movie.description,
+                movie.description ?? "",
                 style: const TextStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
                   fontSize: 16.0,
@@ -337,8 +323,8 @@ class MovieDetailScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                movie.review.isNotEmpty
-                    ? movie.review
+                movie.review != null && movie.review!.isNotEmpty
+                    ? movie.review!
                     : 'No hay reseña disponible.',
                 style: const TextStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
@@ -399,7 +385,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildMovieImage(widget
-                .movie.imageUrl), // Aquí se muestra la imagen de la película
+                .movie.imageUrl??""), // Aquí se muestra la imagen de la película
             const SizedBox(height: 16.0),
             Text(
               'Película: ${widget.movie.title}',
@@ -431,19 +417,19 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
- Widget _buildMovieImage(String imageUrl) {
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(8.0),
-    child: CachedNetworkImage(
-      imageUrl: imageUrl,
-      width: 50.0,
-      height: 50.0,
-      fit: BoxFit.cover,
-      placeholder: (context, url) => CircularProgressIndicator(),
-      errorWidget: (context, url, error) => Icon(Icons.error),
-    ),
-  );
-}
+  Widget _buildMovieImage(String imageUrl) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8.0),
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+        width: 50.0,
+        height: 50.0,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => CircularProgressIndicator(),
+        errorWidget: (context, url, error) => Icon(Icons.error),
+      ),
+    );
+  }
 }
 
 class AddMovieScreen extends StatefulWidget {

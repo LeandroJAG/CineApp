@@ -1,12 +1,11 @@
 import 'dart:convert';
 
-
 class MovieM {
 List<Movie> movieList = [];
  // List<ResidenteModel> residenteListbyUser = [];
 
   MovieM.fromJsonList(json) {
-    print(json);
+   
     if (json == null) {
       return;
     } else {
@@ -15,7 +14,7 @@ List<Movie> movieList = [];
          // print("e");
           try {
             //print("try");
-            final value = Movie.fromMap(json as Map<String, dynamic>);
+            final value = Movie.fromMap(val);
             value.id = key;
             movieList.add(value);
           } catch (e) {
@@ -28,26 +27,27 @@ List<Movie> movieList = [];
 }
 class Movie {
    String? id;
-   String title;
-   String director;
-   String imageUrl;
-   String description;
-   String horario;
-   String categories;
-  bool isFavorite;
-  String review;
+   String? title;
+   String? director;
+   String? imageUrl;
+   String? description;
+   String? horario;
+   String? categories;
+  bool? isFavorite;
+  String? review;
+  Movie({
+    this.id,
+    this.title,
+    this.director,
+    this.imageUrl,
+    this.description,
+    this.horario,
+    this.categories,
+    this.isFavorite,
+    this.review,
+  });
 
-Movie({
-  required this.title,
-  required this.director,
-  required this.imageUrl,
-  required this.description,
-  required this.horario,
-  required this.categories ,
-  this.isFavorite = false,
-  this.review = '',
-  this.id, 
-});
+
 
 
 
@@ -65,18 +65,19 @@ Movie({
     };
   }
 
-  factory Movie.fromMap(Map<String, dynamic> map) {
-    //print("Despues from map");
+  factory Movie.fromMap(Map<String, dynamic>map) {
+    
+    print('Movie  $Movie.');
     return Movie(
-      id: map['id'] ?? '',
-      title: map['title'] ?? '',
-      director: map['director'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
-      description: map['description'] ?? '',
-      horario: map['horario'] ?? '',
-      categories: map['categories']??'',
-      isFavorite: map['isFavorite'] ?? false,
-      review: map['review'] ?? '',
+      description: map['description']??'',
+      director: map['director'] ??'',
+      horario: map['horario'] ,
+      imageUrl: map['imageUrl'] ,
+      isFavorite: map['isFavorite'] ,
+      review: map['review'] ,
+      title: map['title'],
+      categories:  map['categories']??'',
+      
     );
   }
 
