@@ -43,5 +43,21 @@ class ProviderPelicula {
       throw Exception("Error $e");
     }
   }
+  static Future<int> delete(String id) async {
+    try {
+      final url = 'https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula/$id.json';
+
+      final response = await http.delete(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+      
+        return 1;
+      } else {
+        throw Exception("Error ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Error $e");
+    }
+  }
 
 }

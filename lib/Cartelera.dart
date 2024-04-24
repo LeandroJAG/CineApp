@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prueba/Map.dart';
 
 import 'package:prueba/Models/Carteleramodel.dart';
 import 'package:http/http.dart' as http;
@@ -121,7 +122,7 @@ Widget build(BuildContext context) {
                       IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () {
-                          _deleteMovie(index);
+                          _deleteMovie(movie);
                         },
                       ),
                     ],
@@ -209,33 +210,19 @@ Widget build(BuildContext context) {
     }
   }
 
-  void _deleteMovie(int index) {
+  void _deleteMovie(Movie movie) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Confirmar eliminación'),
         content: Text(
-            '¿Estás seguro de que deseas eliminar "${movies[index].title}"?'),
+            '¿Estás seguro de que deseas eliminar "$movie"?'),
         actions: [
           TextButton(
             onPressed: () async {
               // Eliminar la película de la base de datos
-              try {
-                final url =
-                    "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula/$index.json";
-                final response = await http.delete(Uri.parse(url));
-                if (response.statusCode == 200) {
-                  // Si la eliminación en la base de datos es exitosa, eliminarla también de la lista local
-                  setState(() {
-                    movies.removeAt(index);
-                  });
-                } else {
-                  throw Exception('Error ${response.statusCode}');
-                }
-              } catch (e) {
-                print('Error al eliminar la película: $e');
-              }
-              Navigator.pop(context);
+             var eli= ProviderPelicula.delete(movie.id??'');
+             Navigator.of(context).pushNamed(MapScreen.nombre);
             },
             child: Text('Sí'),
           ),
