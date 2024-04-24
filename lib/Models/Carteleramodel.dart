@@ -1,29 +1,27 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
+
 class MovieM {
 List<Movie> movieList = [];
- // List<ResidenteModel> residenteListbyUser = [];
+ 
 
-  MovieM.fromJsonList(json) {
-   
-    if (json == null) {
-      return;
-    } else {
-      json.forEach((key, val) {
-        if (json is Map<String, dynamic>) {
-         // print("e");
-          try {
-            //print("try");
-            final value = Movie.fromMap(val);
-            value.id = key;
-            movieList.add(value);
-          } catch (e) {
-            throw new Exception(e);
-          }
-        }
-      });
-    }
+  MovieM.fromJsonList(Map<String, dynamic> json) {
+  if (json == null) {
+    return;
+  } else {
+    json.forEach((key, val) {
+      try {
+        final value = Movie.fromMap(val);
+        value.id = key;
+        movieList.add(value);
+      } catch (e) {
+        throw Exception(e);
+      }
+    });
   }
+}
+
 }
 class Movie {
    String? id;
@@ -77,6 +75,7 @@ class Movie {
       review: map['review'] ,
       title: map['title'],
       categories:  map['categories']??'',
+       id:map['id']??'',
       
     );
   }
@@ -88,5 +87,29 @@ class Movie {
   @override
   String toString() {
     return 'Movie(title: $title, director: $director, imageUrl: $imageUrl, description: $description, horario: $horario, categories: $categories, isFavorite: $isFavorite, review: $review)';
+  }
+
+ Movie copyWith({
+    String? id,
+    String? title,
+    String? director,
+    String? imageUrl,
+    String? description,
+    String? horario,
+    String? categories,
+    bool? isFavorite,
+    String? review,
+  }) {
+    return Movie(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      director: director ?? this.director,
+      imageUrl: imageUrl ?? this.imageUrl,
+      description: description ?? this.description,
+      horario: horario ?? this.horario,
+      categories: categories ?? this.categories,
+      isFavorite: isFavorite ?? this.isFavorite,
+      review: review ?? this.review,
+    );
   }
 }

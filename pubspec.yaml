@@ -35,13 +35,14 @@ dependencies:
   latlong2: ^0.8.1
   http:
   shared_preferences: ^2.2.2
-  provider: ^5.0.0
+
   firebase_core: ^2.24.2
   firebase_auth:
   flutter_bloc: ^7.0.0
   equatable: ^2.0.3
   google_fonts: ^2.0.0
   cached_network_image: ^3.0.0 
+  provider:
 
 
   # The following adds the Cupertino Icons font to your application.

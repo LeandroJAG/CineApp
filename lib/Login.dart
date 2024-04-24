@@ -63,7 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             // Image Container with all corners semi-circular
             ClipRRect(
-              borderRadius: BorderRadius.circular(30), // Make all corners semi-circular
+              borderRadius:
+                  BorderRadius.circular(30), // Make all corners semi-circular
               child: Container(
                 width: double.infinity,
                 height: 150, // Ajusta la altura aquí
@@ -117,36 +118,44 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 200.0,
                       height: 50.0,
                       child: ElevatedButton(
-                        onPressed: isLoading ? null : () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              isLoading = true; // Indicar que se está cargando
-                            });
-                            try {
-                              final success = await au.authenticate(email, password);
-                              if (success == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Usuario o contraseña incorrectos'),
-                                  ),
-                                );
-                              } else {
-                                Navigator.of(context).pushNamed(MapScreen.nombre);
-                              }
-                            } catch (e) {
-                              print(e);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Usuario o contraseña incorrectos'),
-                                ),
-                              );
-                            } finally {
-                              setState(() {
-                                isLoading = false; 
-                              });
-                            }
-                          }
-                        },
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    isLoading =
+                                        true; // Indicar que se está cargando
+                                  });
+                                  try {
+                                    final success =
+                                        await au.authenticate(email, password);
+                                    if (success == null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Usuario o contraseña incorrectos'),
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.of(context)
+                                          .pushNamed(MapScreen.nombre);
+                                    }
+                                  } catch (e) {
+                                    print(e);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'Usuario o contraseña incorrectos'),
+                                      ),
+                                    );
+                                  } finally {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 202, 224, 241),
                           shape: RoundedRectangleBorder(
@@ -157,7 +166,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? CircularProgressIndicator() // Mostrar un indicador de carga si está cargando
                             : Text(
                                 'INICIAR',
-                                style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 12, 27, 39)),
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color.fromARGB(255, 12, 27, 39)),
                               ),
                       ),
                     ),
@@ -182,7 +193,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     'Únete',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
                   ),
                 ),
                 Expanded(
@@ -205,10 +219,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => RegistrationScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => RegistrationScreen()),
                         );
                       },
-                      icon: Icon(Icons.person_add_alt_1_outlined, color: Colors.blue),
+                      icon: Icon(Icons.person_add_alt_1_outlined,
+                          color: Colors.blue),
                       iconSize: 50,
                     ),
                     Text(

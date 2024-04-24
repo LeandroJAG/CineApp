@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:prueba/Map.dart';
 
 import 'package:prueba/Models/Carteleramodel.dart';
-import 'package:http/http.dart' as http;
 import 'package:prueba/Provider/Pelicula.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -15,139 +15,135 @@ class MyApp1 extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp1> {
-  final List<Movie> movies = [
-    Movie(
-      title: 'Spider-Man No Way Home',
-      director: 'Jon Watts',
-      imageUrl: 'assets/images/spiderman1.jpeg',
-      description:
-          'Es una película estadounidense de superhéroes basada en el personaje Spider-Man, de Marvel Comics...',
-      horario: '10:00AM - 1:00PM',
-      categories: 'aventura',
-      isFavorite: false,
-      review: '',
-    ),
-    // Add more movies with categories
-  ];
   late Future<List<Movie>> MovieMList;
 
   @override
   void initState() {
-    MovieMList = ProviderPelicula.getAll();
+    final provider = Provider.of<ProviderPelicula>(context, listen: false);
+    MovieMList = provider.getAll();
     super.initState();
   }
 
   @override
-Widget build(BuildContext context) {
-  return FutureBuilder<List<Movie>>(
-    future: MovieMList,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      } else if (snapshot.hasError) {
-        return Center(
-          child: Text('Error: ${snapshot.error}'),
-        );
-      } else if (snapshot.hasData) {
-        List<Movie>? movieMList = snapshot.data;
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'Cartelera de Películas',
-              style: TextStyle(
-                color: Color.fromARGB(255, 0, 0, 0),
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          body: ListView.builder(
-            itemCount: movieMList?.length ?? 0,
-            itemBuilder: (context, index) {
-              Movie movie = movieMList![index];
-              return Card(
-                elevation: 2.0,
-                margin: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 16.0,
-                ),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(16.0),
-                  title: Text(
-                    movie.title ?? "",
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ChangeNotifierProvider(
+        create: (_) => ProviderPelicula(),
+        child: Consumer<ProviderPelicula>(
+          builder: (context, provider, _) {
+            return FutureBuilder<List<Movie>>(
+              future: MovieMList,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else if (snapshot.hasData) {
+                  List<Movie>? movieMList = snapshot.data;
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text(
+                        'Cartelera de Películas',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Director: ${movie.director}'),
-                      Text('Horario: ${movie.horario}'),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        'Categorías: ${movie.categories}',
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 100, 100, 100),
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                  leading: _buildMovieImage(movie.imageUrl ?? ""),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          movie.isFavorite ?? false
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {
-                          _toggleFavorite(index);
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.rate_review),
-                        onPressed: () {
-                          _openReviewScreen(context, movie);
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          _deleteMovie(movie);
-                        },
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    _navigateToMovieDetails(context, movie);
-                  },
-                ),
-              );
-            },
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: _addNewMovie,
-            tooltip: 'Agregar película',
-            child: Icon(Icons.add),
-          ),
-        );
-      } else {
-        return Center(
-          child: Text('No se encontraron datos.'),
-        );
-      }
-    },
-  );
-}
+                    body: ListView.builder(
+                      itemCount: movieMList?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        Movie movie = movieMList![index];
+                        return Card(
+                          elevation: 2.0,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 8.0,
+                            horizontal: 16.0,
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16.0),
+                            title: Text(
+                              movie.title ?? "",
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Director: ${movie.director}'),
+                                Text('Horario: ${movie.horario}'),
+                                const SizedBox(height: 4.0),
+                                Text(
+                                  'Categorías: ${movie.categories}',
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 100, 100, 100),
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            leading: _buildMovieImage(movie.imageUrl ?? ""),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    movie.isFavorite ?? false
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    //_toggleFavorite(index);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.rate_review),
+                                  onPressed: () {
+                                    _openReviewScreen(context, movie);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    _deleteMovie(movie);
+                                  },
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              _navigateToMovieDetails(context, movie);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    floatingActionButton: FloatingActionButton(
+                      onPressed: printH,
+                      tooltip: 'Agregar película',
+                      child: Icon(Icons.add),
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: Text('No se encontraron datos.'),
+                  );
+                }
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
 
 
   Widget _buildMovieImage(String imageUrl) {
@@ -163,13 +159,13 @@ Widget build(BuildContext context) {
     );
   }
 
-  void _toggleFavorite(int index) {
-    setState(() {
-      if (movies[index].isFavorite != null) {
-        movies[index].isFavorite = !(movies[index].isFavorite!);
-      }
-    });
-  }
+  //void _toggleFavorite(int index) {
+    //setState(() {
+     // if (movies[index].isFavorite != null) {
+       // movies[index].isFavorite = !(movies[index].isFavorite!);
+      //}
+    //});
+  //}
 
   void _openReviewScreen(BuildContext context, Movie movie) async {
     final result = await Navigator.push(
@@ -195,49 +191,43 @@ Widget build(BuildContext context) {
     );
   }
 
-  void _addNewMovie() async {
-    final newMovie = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddMovieScreen(),
-      ),
-    );
-
-    if (newMovie != null && newMovie is Movie) {
-      setState(() {
-        movies.add(newMovie);
-      });
-    }
-  }
+  
 
   void _deleteMovie(Movie movie) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Confirmar eliminaciónn'),
-        content: Text(
-            '¿Estás seguro de que deseas eliminar "$movie"?'),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              // Eliminar la película de la base de datos
-             var eli= ProviderPelicula.delete(movie.id??'');
-             Navigator.of(context).pushNamed(MapScreen.nombre);
-            },
-            child: Text('Sí'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Cancelar'),
-          ),
-        ],
-      ),
-    );
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Confirmar eliminaciónn'),
+      content: Text(
+          '¿Estás seguro de que deseas eliminar "$movie"?'),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            try {
+              final provider = Provider.of<ProviderPelicula>(context, listen: false);
+              await provider.deleteMovie(movie.id ?? '');
+              Navigator.of(context).pushNamed(MapScreen.nombre);
+            } catch (e) {
+              // Manejar errores
+              print('Error al eliminar la película: $e');
+            }
+          },
+          child: Text('Sí'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Cancelar'),
+        ),
+      ],
+    ),
+  );
   }
 }
-
+void printH(){
+  print("hola");
+}
 class MovieDetailScreen extends StatelessWidget {
   final Movie movie;
 
@@ -586,28 +576,33 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
   }
 
   void _saveMovie() {
-    if (_titleController.text.isNotEmpty &&
-        _directorController.text.isNotEmpty &&
-        _descriptionController.text.isNotEmpty &&
-        _horarioController.text.isNotEmpty &&
-        _categories.isNotEmpty) {
-      Movie newMovie = Movie(
-        title: _titleController.text,
-        director: _directorController.text,
-        imageUrl: _selectedImageUrl,
-        description: _descriptionController.text,
-        horario: _horarioController.text,
-        categories: 'Accion ',
-      );
-      service.save(newMovie);
+  if (_titleController.text.isNotEmpty &&
+      _directorController.text.isNotEmpty &&
+      _descriptionController.text.isNotEmpty &&
+      _horarioController.text.isNotEmpty &&
+      _categories.isNotEmpty) {
+    Movie newMovie = Movie(
+      title: _titleController.text,
+      director: _directorController.text,
+      imageUrl: _selectedImageUrl,
+      description: _descriptionController.text,
+      horario: _horarioController.text,
+      categories: 'Accion',
+    );
+
+    final provider = context.read<ProviderPelicula>();
+
+    provider.save(newMovie).then((newMovieId) {
+      // Se ejecuta cuando se guarda exitosamente la película
+      newMovie = newMovie.copyWith(id: newMovieId);
       Navigator.pop(context, newMovie);
-    } else {
+    }).catchError((error) {
+      // Se ejecuta en caso de que ocurra un error al guardar la película
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text(
-              'Por favor complete todos los campos y seleccione al menos una categoría.'),
+          content: Text('Error al guardar la película: $error'),
           actions: [
             TextButton(
               onPressed: () {
@@ -618,6 +613,25 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
           ],
         ),
       );
-    }
+    });
+  } else {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(
+            'Por favor complete todos los campos y seleccione al menos una categoría.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
+}
+
 }
