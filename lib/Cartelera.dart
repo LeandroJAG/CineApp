@@ -214,7 +214,7 @@ Widget build(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirmar eliminación'),
+        title: Text('Confirmar eliminaciónn'),
         content: Text(
             '¿Estás seguro de que deseas eliminar "$movie"?'),
         actions: [
