@@ -3,13 +3,9 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 
 class MovieM {
-List<Movie> movieList = [];
- 
+  List<Movie> movieList = [];
 
   MovieM.fromJsonList(Map<String, dynamic> json) {
-  if (json == null) {
-    return;
-  } else {
     json.forEach((key, val) {
       try {
         final value = Movie.fromMap(val);
@@ -19,20 +15,20 @@ List<Movie> movieList = [];
         throw Exception(e);
       }
     });
-  }
+    }
 }
 
-}
 class Movie {
-   String? id;
-   String? title;
-   String? director;
-   String? imageUrl;
-   String? description;
-   String? horario;
-   String? categories;
+  String? id;
+  String? title;
+  String? director;
+  String? imageUrl;
+  String? description;
+  String? horario;
+  String? categories;
   bool? isFavorite;
   String? review;
+
   Movie({
     this.id,
     this.title,
@@ -45,13 +41,9 @@ class Movie {
     this.review,
   });
 
-
-
-
-
   Map<String, dynamic> toMap() {
     return {
-       'id':id,
+      'id': id,
       'title': title,
       'director': director,
       'imageUrl': imageUrl,
@@ -63,33 +55,31 @@ class Movie {
     };
   }
 
-  factory Movie.fromMap(Map<String, dynamic>map) {
-    
-    print('Movie  $Movie.');
+  factory Movie.fromMap(Map<String, dynamic> map) {
     return Movie(
-      description: map['description']??'',
-      director: map['director'] ??'',
-      horario: map['horario'] ,
-      imageUrl: map['imageUrl'] ,
-      isFavorite: map['isFavorite'] ,
-      review: map['review'] ,
-      title: map['title'],
-      categories:  map['categories']??'',
-       id:map['id']??'',
-      
+      description: map['description'] ?? '',
+      director: map['director'] ?? '',
+      horario: map['horario'] ?? '',
+      imageUrl: map['imageUrl'] ?? '',
+      isFavorite: map['isFavorite'] ?? false,
+      review: map['review'] ?? '',
+      title: map['title'] ?? '',
+      categories: map['categories'] ?? '',
+      id: map['id'] ?? '',
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Movie.fromJson(String source) => Movie.fromMap(json.decode(source));
+  factory Movie.fromJson(String source) =>
+      Movie.fromMap(json.decode(source));
 
   @override
   String toString() {
     return 'Movie(title: $title, director: $director, imageUrl: $imageUrl, description: $description, horario: $horario, categories: $categories, isFavorite: $isFavorite, review: $review)';
   }
 
- Movie copyWith({
+  Movie copyWith({
     String? id,
     String? title,
     String? director,

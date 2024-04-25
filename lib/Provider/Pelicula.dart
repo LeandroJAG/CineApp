@@ -18,10 +18,10 @@ class ProviderPelicula with ChangeNotifier {
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
       _movies = jsonData.entries.map((entry) {
-        return Movie.fromJson(entry.value);
-      }).toList();
-      notifyListeners();
-      return _movies; // Este es el cambio
+          return Movie.fromMap(entry.value);
+        }).toList();
+        notifyListeners();
+        return _movies;
     } else {
       throw Exception("Ocurrió algo ${response.statusCode}");
     }
