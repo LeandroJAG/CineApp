@@ -127,7 +127,7 @@ class _MyAppState extends State<MyApp1> {
                       },
                     ),
                     floatingActionButton: FloatingActionButton(
-                      onPressed: printH,
+                      onPressed: () => Navigator.of(context).pushNamed(AddMovieScreen.nombre),
                       tooltip: 'Agregar película',
                       child: Icon(Icons.add),
                     ),
@@ -225,9 +225,7 @@ class _MyAppState extends State<MyApp1> {
   );
   }
 }
-void printH(){
-  print("hola");
-}
+
 class MovieDetailScreen extends StatelessWidget {
   final Movie movie;
 
@@ -410,6 +408,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
 }
 
 class AddMovieScreen extends StatefulWidget {
+  static const String nombre = 'Agregarpelicula';
   @override
   _AddMovieScreenState createState() => _AddMovieScreenState();
 }

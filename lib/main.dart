@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
           MapScreen.nombre: (context) => const MapScreen(),
           RegistrationScreen.nombre: (context) => const RegistrationScreen(),
           WelcomeScreen.nombre: (context) => WelcomeScreen(),
+          AddMovieScreen.nombre: (context) => AddMovieScreen(),
         },
         home: LoginScreen(),
       ),
