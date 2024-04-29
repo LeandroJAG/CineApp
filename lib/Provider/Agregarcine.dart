@@ -21,7 +21,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Future<void> agregarCine(dynamic data) async {
     try {
       final String _endpoint =
-      "https://carteleracine-91a56-default-rtdb.firebaseio.com/Cine";
+      "https://carteleracine-91a56-default-rtdb.firebaseio.com/Cine.json";
       String nombre;
       double latitud;
       double longitud;
@@ -59,7 +59,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ));
         });
       } else {
-        // Manejar el caso en el que no se proporcionan todos los datos necesarios
+       
       }
     } catch (e) {
       // Manejar errores
@@ -71,7 +71,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     try {
       await agregarCine(jsonCine);
     } catch (e) {
-      // Manejar errores
       print('Error: $e');
     }
   }
@@ -80,7 +79,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     try {
       await agregarCine(endpoint);
     } catch (e) {
-      // Manejar errores
       print('Error: $e');
     }
   }
