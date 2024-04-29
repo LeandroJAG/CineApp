@@ -1,85 +1,81 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:prueba/Map.dart';
+import 'package:prueba/Models/aggcinemodel.dart';
 
-class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
-  
+class ProviderCines with ChangeNotifier {
   final String _endpoint =
       "https://carteleracine-91a56-default-rtdb.firebaseio.com/Cine";
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Map Screen'),
-      ),
-      body: Center(
-        child: Text('Map content goes here'),
-      ),
-    );
-  }
-  Future<void> agregarCine(dynamic data) async {
+
+  List<Cines> _cines = [];
+
+  List<Cines> get cines => _cines;
+
+  Future<List<Cines>> getAll() async {
     try {
-      final String _endpoint =
-      "https://carteleracine-91a56-default-rtdb.firebaseio.com/Cine.json";
-      String nombre;
-      double latitud;
-      double longitud;
-
-      if (data is String) {
-        Map<String, dynamic> cineData = json.decode(data);
-        nombre = cineData['nombre'];
-        latitud = cineData['latitud'];
-        longitud = cineData['longitud'];
-      } else if (data is Uri) {
-        http.Response response = await http.get(data);
-        if (response.statusCode == 200) {
-          Map<String, dynamic> cineData = json.decode(response.body);
-          nombre = cineData['nombre'];
-          latitud = cineData['latitud'];
-          longitud = cineData['longitud'];
-        } else {
-          throw Exception('Failed to load data from endpoint');
-        }
+      final response = await http.get(Uri.parse(_endpoint));
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+        _cines = jsonData.entries.map((entry) {
+          return Cines.fromMap(entry.value);
+        }).toList();
+        notifyListeners();
+        return _cines;
       } else {
-        throw Exception('Invalid data type');
-      }
-
-      if (nombre.isNotEmpty && latitud != 0.0 && longitud != 0.0) {
-        setState(() {
-          local.add(Cines(
-            nombre: nombre,
-            latitud: latitud,
-            longitud: longitud,
-            resenas: [],
-            peliculaProyectandose: '',
-            horainicio: '',
-            imagen: 'assets/images/nuevo_cine.png',
-            horarios: '',
-          ));
-        });
-      } else {
-       
+        throw Exception("Ocurrió algo ${response.statusCode}");
       }
     } catch (e) {
-      // Manejar errores
-      print('Error: $e');
+      throw Exception("Error $e");
     }
   }
 
-  Future<void> agregarCineDesdeJson(String jsonCine) async {
+  Future<void> deleteCine(String cineId) async {
     try {
-      await agregarCine(jsonCine);
+      final response =
+          await http.delete(Uri.parse('$_endpoint/$cineId.json'));
+      if (response.statusCode == 200) {
+        _cines.removeWhere((cine) => cine.nombre == cineId);
+        notifyListeners();
+      } else {
+        throw Exception('Failed to delete cine: ${response.statusCode}');
+      }
     } catch (e) {
-      print('Error: $e');
+      throw Exception('Error deleting cine: $e');
     }
   }
 
-  Future<void> agregarCineDesdeEndpoint(Uri endpoint) async {
+  Future<String> save(Cines data) async {
     try {
-      await agregarCine(endpoint);
+      final url = "$_endpoint.json";
+      final response =
+          await http.post(Uri.parse(url), body: json.encode(data.toMap()));
+      if (response.statusCode == 200) {
+        String body = utf8.decode(response.bodyBytes);
+        final jsonData = jsonDecode(body);
+
+        // Agregar el cine a la lista local después de guardarla en la base de datos
+        final newCineId = jsonData['name'];
+        final newCine = Cines(
+          nombre: newCineId ?? data.nombre,
+          latitud: data.latitud,
+          longitud: data.longitud,
+          resenas: data.resenas,
+          peliculaProyectandose: data.peliculaProyectandose,
+          horainicio: data.horainicio,
+          imagen: data.imagen,
+          horarios: data.horarios,
+        );
+        _cines.add(newCine);
+
+        // Notificar a los listeners que los datos han cambiado
+        notifyListeners();
+
+        return newCineId;
+      } else {
+        throw Exception("Error ${response.statusCode}");
+      }
     } catch (e) {
-      print('Error: $e');
+      throw Exception("Error $e");
     }
   }
 }

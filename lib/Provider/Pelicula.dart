@@ -66,4 +66,6 @@ Future<String> save(Movie data) async {
   }
 }
 
+  void addMovie(Movie newMovie) {}
+
 }

@@ -5,7 +5,7 @@ import 'package:prueba/Provider/Registrouser.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
-static const String nombre = 'registe';
+  static const String nombre = 'registe';
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -22,67 +22,61 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primaryColor: Colors.blue, // Aplicar color azul al tema
-        hintColor: Colors.blue, // Color de acento
-        inputDecorationTheme: InputDecorationTheme(
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue), // Color para el borde cuando está enfocado
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue.withOpacity(0.5)), // Color para el borde cuando no está enfocado
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('👈Regresar'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoginScreen(),
+              ),
+            );
+          },
         ),
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Registro'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: formKey,
+          child: ListView(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              );
-            },
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: formKey,
-            child: ListView(
-              children: [
-                Image.asset(
-                  'assets/images/cine.jpg',
-                  height: 84,
-                  width: 84,
-                  fit: BoxFit.contain,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    'assets/images/cine.jpg',
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                SizedBox(height: 20),
-                _buildTextFormField(_firstNameController, 'Nombre',
-                    'ingresa tu nombre'),
-                _buildTextFormField(_lastNameController, 'Apellido',
-                    'Ingresa tu apellido'),
-                _buildTextFormField(_emailController, 'Correo Electrónico',
-                    'Ingresa tu correo'),
-                _buildTextFormField(_passwordController, 'Contraseña',
-                    'Ingresa tu contraseña',
-                    obscureText: true),
-                _buildTextFormField(_addressController, 'Dirección',
-                    'Ingresa tu dirección'),
-                _buildTextFormField(_phoneController, 'Teléfono',
-                    'Ingresa tu número de teléfono'),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _submit,
-                  child: const Text('Registrar'),
-                ),
-              ],
-            ),
+              ),
+              SizedBox(height: 20),
+              _buildTextFormField(_firstNameController, 'Nombre',
+                  'ingresa tu nombre'),
+              _buildTextFormField(_lastNameController, 'Apellido',
+                  'Ingresa tu apellido'),
+              _buildTextFormField(_emailController, 'Correo Electrónico',
+                  'Ingresa tu correo'),
+              _buildTextFormField(_passwordController, 'Contraseña',
+                  'Ingresa tu contraseña',
+                  obscureText: true),
+              _buildTextFormField(_addressController, 'Dirección',
+                  'Ingresa tu dirección'),
+              _buildTextFormField(_phoneController, 'Teléfono',
+                  'Ingresa tu número de teléfono'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submit,
+                child: const Text('Registrar'),
+              ),
+            ],
           ),
         ),
       ),

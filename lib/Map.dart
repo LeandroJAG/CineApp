@@ -4,17 +4,18 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:prueba/Cartelera.dart';
 import 'package:prueba/Login.dart';
+import 'package:prueba/Models/aggcinemodel.dart';
+import 'package:prueba/Provider/Agregarcine.dart';
 
-import 'Sharepreference/Sharepreference.dart';
+import 'package:prueba/Sharepreference/Sharepreference.dart'; // Importa tu provider
 
-// ignore: constant_identifier_names
 const MAPBOX_ACCESS_TOKEN =
     'pk.eyJ1IjoiZGFuaWVsanIxMSIsImEiOiJjbG5lcXhiYTgwZThhMmpvNGtlNG1vcTdxIn0.xLcplNW4L11ON3Ekf3wpaQ';
 
 class MapScreen extends StatefulWidget {
   static const String nombre = 'mapa';
 
-  const MapScreen({super.key});
+  const MapScreen({Key? key}) : super(key: key);
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -22,20 +23,65 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final prefs = PreferenciaUsuario();
-
-  final PageController _pageController = PageController();
+  final provider = ProviderCines(); // Instancia de tu provider
   bool showCineDetails = false;
   String selectedcine = "";
-  //animations marker
   late AnimationController animationController;
   late Animation<double> sizeAnimation;
   LatLng? myPosition;
-  String? selectedcines; // Categoría seleccionada
+  String? selectedcines;
+  final PageController _pageController = PageController();
 
-  // Función para mostrar el cuadro de diálogo de búsqueda de cines
+  // Método para cargar cines al iniciar
+  Future<void> loadCines() async {
+    try {
+      final cines = await provider.getAll();
+      setState(() {
+        local = cines;
+      });
+    } catch (e) {
+      // Maneja el error de carga de cines
+    }
+  }
+
+  @override
+  void initState() {
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+    sizeAnimation = Tween<double>(
+      begin: 30.0,
+      end: 60.0,
+    ).animate(animationController);
+    animationController.repeat(reverse: true);
+    getCurrentLocation();
+    loadCines(); // Cargar cines al iniciar
+    super.initState();
+  }
+
+  Future<void> saveCine(Cines cine) async {
+    try {
+      final newCineId = await provider.save(cine);
+      // Actualiza la lista local con el nuevo cine
+      final newCine = Cines(
+        nombre: newCineId ?? cine.nombre,
+        latitud: (null) ?? cine.latitud,
+        longitud: (null) ?? cine.longitud,
+        resenas: (null) ?? cine.resenas,
+        peliculaProyectandose: (null) ?? cine.peliculaProyectandose,
+        horainicio: (null) ?? cine.horainicio,
+        imagen: (null) ?? cine.imagen,
+        horarios: (null) ?? cine.horarios,
+      );
+      setState(() {
+        local.add(newCine);
+      });
+    } catch (e) {
+      // Maneja el error de guardado del cine
+    }
+  }
+
   void showSearchDialog() {
-    // Aquí puedes implementar la lógica para mostrar el cuadro de diálogo de búsqueda
-    // o navegar a otra pantalla para agregar nuevas ubicaciones de cines.
+    // Implementa la lógica de búsqueda de cines
   }
 
   Future<Position> determinePosition() async {
@@ -50,9 +96,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return await Geolocator.getCurrentPosition();
   }
 
-  void showDetails(String selectedcine) {
+  void showDetails(String selectedCine) {
     setState(() {
-      selectedcine = selectedcine;
+      selectedcine = selectedCine;
       showCineDetails = true;
     });
   }
@@ -69,22 +115,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       myPosition = LatLng(position.latitude, position.longitude);
       print(myPosition);
     });
-  }
-
-  @override
-  void initState() {
-    //initialization
-    animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1000));
-    sizeAnimation = Tween<double>(
-      begin: 30.0,
-      end: 60.0,
-    ).animate(animationController);
-    animationController.repeat(reverse: true);
-    print(animationController);
-//animationController.forward();
-    getCurrentLocation();
-    super.initState();
   }
 
   @override
@@ -105,7 +135,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.add), // Botón para agregar un nuevo cine
+            icon: Icon(Icons.add),
             onPressed: () {
               showDialog(
                 context: context,
@@ -113,7 +143,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   TextEditingController nombreController = TextEditingController();
                   TextEditingController latitudController = TextEditingController();
                   TextEditingController longitudController = TextEditingController();
-                  
+                  TextEditingController resenasController = TextEditingController();
+                  TextEditingController peliculaProyectandoseController = TextEditingController();
+                  TextEditingController horainicioController = TextEditingController();
+                  TextEditingController imagenController = TextEditingController();
+                  TextEditingController horariosController = TextEditingController();
+
                   return AlertDialog(
                     title: Text('Agregar Cine'),
                     content: Column(
@@ -133,6 +168,26 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                           decoration: InputDecoration(labelText: 'Longitud'),
                           keyboardType: TextInputType.number,
                         ),
+                        TextField(
+                          controller: resenasController,
+                          decoration: InputDecoration(labelText: 'Reseñas'),
+                        ),
+                        TextField(
+                          controller: peliculaProyectandoseController,
+                          decoration: InputDecoration(labelText: 'Película Proyectándose'),
+                        ),
+                        TextField(
+                          controller: horainicioController,
+                          decoration: InputDecoration(labelText: 'Hora de Inicio'),
+                        ),
+                        TextField(
+                          controller: imagenController,
+                          decoration: InputDecoration(labelText: 'Imagen (URL)'),
+                        ),
+                        TextField(
+                          controller: horariosController,
+                          decoration: InputDecoration(labelText: 'Horarios'),
+                        ),
                       ],
                     ),
                     actions: [
@@ -147,20 +202,23 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                           String nombre = nombreController.text;
                           double latitud = double.tryParse(latitudController.text) ?? 0.0;
                           double longitud = double.tryParse(longitudController.text) ?? 0.0;
-                          
+                          List<String> resenas = resenasController.text.split(',');
+                          String peliculaProyectandose = peliculaProyectandoseController.text;
+                          String horainicio = horainicioController.text;
+                          String imagen = imagenController.text;
+                          String horarios = horariosController.text;
+
                           if (nombre.isNotEmpty && latitud != 0.0 && longitud != 0.0) {
-                            setState(() {
-                              local.add(Cines(
-                                nombre: nombre,
-                                latitud: latitud,
-                                longitud: longitud,
-                                resenas: [],
-                                peliculaProyectandose: '',
-                                horainicio: '',
-                                imagen: 'assets/images/nuevo_cine.png',
-                                horarios: '',
-                              ));
-                            });
+                            saveCine(Cines(
+                              nombre: nombre,
+                              latitud: latitud,
+                              longitud: longitud,
+                              resenas: resenas,
+                              peliculaProyectandose: peliculaProyectandose,
+                              horainicio: horainicio,
+                              imagen: imagen,
+                              horarios: horarios,
+                            ));
                             Navigator.of(context).pop();
                           } else {
                             // Manejar el caso en el que no se proporcionan todos los datos necesarios
@@ -327,28 +385,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 }
 
-class Cines {
-  final String nombre;
-  final double latitud;
-  final double longitud;
-  final List<String> resenas;
-  final String peliculaProyectandose;
-  final String horainicio;
-  final String imagen;
-
-  Cines({
-    required this.nombre,
-    required this.latitud,
-    required this.longitud,
-    required this.resenas,
-    required this.peliculaProyectandose,
-    required this.horainicio,
-    required this.imagen,
-    required String horarios,
-  });
-}
-
-final List<Cines> local = [
+List<Cines> local = [
   Cines(
     nombre: 'Cine Colombia',
     latitud: 10.907399090308166,
@@ -400,14 +437,16 @@ class _MapItemDetails extends StatelessWidget {
               children: [
                 Expanded(
                   child: Container(
-                      width: 80.0,
-                      height: 80.0,
-                      margin: const EdgeInsets.only(top: 20.0),
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Image.asset(
-                        locales.imagen,
-                      )),
+                    width: 80.0,
+                    height: 80.0,
+                    margin: const EdgeInsets.only(top: 20.0),
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Image.network(
+                      locales.imagen, // Utiliza la URL de la imagen
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: Container(
