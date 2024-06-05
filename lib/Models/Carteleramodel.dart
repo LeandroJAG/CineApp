@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/widgets.dart';
-
 class MovieM {
   List<Movie> movieList = [];
 

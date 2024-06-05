@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class User {
   List<UsuarioModel> userList = [];
   UsuarioModel? usersAuthenticated; 
@@ -62,7 +64,7 @@ class UsuarioModel {
     this.id,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       "contrasena": contrasena,
       "correo": correo,
@@ -85,6 +87,11 @@ class UsuarioModel {
       contrasena: map['contrasena'],
     );
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory UsuarioModel.fromJson(String source) =>
+      UsuarioModel.fromMap(json.decode(source));
 
   static fromJsonListUserAuthenticate(jsonData) {}
 

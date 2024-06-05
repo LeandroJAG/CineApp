@@ -63,7 +63,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       final newCineId = await provider.save(cine);
       // Actualiza la lista local con el nuevo cine
       final newCine = Cines(
-        nombre: newCineId ?? cine.nombre,
+        nombre: newCineId,
         latitud: (null) ?? cine.latitud,
         longitud: (null) ?? cine.longitud,
         resenas: (null) ?? cine.resenas,

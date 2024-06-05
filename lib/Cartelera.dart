@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:prueba/Map.dart';
 
 import 'package:prueba/Models/Carteleramodel.dart';
-import 'package:prueba/Provider/Pelicula.dart';
+import "package:prueba/Provider/Pelicula.dart";
 import 'package:cached_network_image/cached_network_image.dart';
 
 class MyApp1 extends StatefulWidget {

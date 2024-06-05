@@ -11,7 +11,7 @@ class PreferenciaUsuario {
 
   late SharedPreferences _prefs;
 
-  Future<void> initPrefs() async {
+   initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
@@ -23,6 +23,14 @@ class PreferenciaUsuario {
     await _prefs.setString('password', password);
     _usuario = username;
     _contrasena = password;
+  }
+  
+  String get token {
+    return _prefs.getString('auth_token') ?? "";
+  }
+
+  set token(String value) {
+    _prefs.setString('auth_token', value);
   }
 
   Future<void> loadUserData() async {
