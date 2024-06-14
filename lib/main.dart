@@ -29,11 +29,9 @@ class MyApp extends StatelessWidget {
         initialRoute: LoginScreen.nombre,
         routes: {
           LoginScreen.nombre: (context) => LoginScreen(),
-          MyApp1.nombre: (context) => const MyApp1(),
           MapScreen.nombre: (context) => const MapScreen(),
           RegistrationScreen.nombre: (context) => const RegistrationScreen(),
           WelcomeScreen.nombre: (context) => WelcomeScreen(),
-          AddMovieScreen.nombre: (context) => AddMovieScreen(),
         },
         home: LoginScreen(),
       ),

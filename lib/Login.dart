@@ -8,6 +8,9 @@ class RoundedInputField extends StatelessWidget {
   final IconData icon;
   final ValueChanged<String> onChanged;
   final bool isPassword;
+
+  
+
   const RoundedInputField({
     Key? key,
     required this.hintText,
@@ -55,6 +58,24 @@ class _LoginScreenState extends State<LoginScreen> {
   String password = '';
   bool isLoading = false; // Variable para indicar si está cargando
   AuthenticationServices au = AuthenticationServices();
+  final AuthService _authService = AuthService();
+
+  void _login(BuildContext context) async {
+    final String correo = email;
+    final String contrasena = password;
+    final success = await _authService.signIn(correo, contrasena);
+    if (success) {
+      print('Usuario y contraseña correctos');
+      Navigator.of(context)
+      .pushNamed(MapScreen.nombre);
+      
+    }else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Correo o contraseña incorrectossss')),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -123,45 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 200.0,
                         height: 50.0,
                         child: ElevatedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    setState(() {
-                                      isLoading =
-                                          true; // Indicar que se está cargando
-                                    });
-                                    try {
-                                      final success = await au.authenticate(
-                                          email, password);
-                                      if (success == null) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                                'Usuario o contraseña incorrectos'),
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.of(context)
-                                            .pushNamed(MapScreen.nombre);
-                                      }
-                                    } catch (e) {
-                                      print(e);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                              'Usuario o contraseña incorrectos'),
-                                        ),
-                                      );
-                                    } finally {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                    }
-                                  }
-                                },
+                          onPressed: () => _login(context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Color.fromARGB(255, 202, 224, 241),

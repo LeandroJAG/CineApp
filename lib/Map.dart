@@ -397,7 +397,7 @@ List<Cines> local = [
     horainicio: '',
   ),
   Cines(
-    nombre: 'Royal Films',
+    nombre: 'Royal Filmsss',
     latitud: 10.989675364643436,
     longitud: -74.78810475177276,
     resenas: ['Buenos pasabocas', 'Excelente servicio'],
@@ -509,10 +509,12 @@ class _MapItemDetails extends StatelessWidget {
                             const EdgeInsets.only(top: 10.0, right: 10.0),
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            Navigator.push(
+                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => MyApp1()),
                             );
+
+                            
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,

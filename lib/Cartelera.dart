@@ -4,7 +4,7 @@ import 'package:prueba/Map.dart';
 
 import 'package:prueba/Models/Carteleramodel.dart';
 import "package:prueba/Provider/Pelicula.dart";
-import 'package:cached_network_image/cached_network_image.dart';
+
 
 class MyApp1 extends StatefulWidget {
   const MyApp1({Key? key});
@@ -127,8 +127,13 @@ class _MyAppState extends State<MyApp1> {
                       },
                     ),
                     floatingActionButton: FloatingActionButton(
-                      onPressed: () => Navigator.of(context).pushNamed(AddMovieScreen.nombre),
-                      tooltip: 'Agregar película',
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddMovieScreen() , 
+                          ),
+                        ),
+                      tooltip: 'Agregar películass',
                       child: Icon(Icons.add),
                     ),
                   );
@@ -395,14 +400,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget _buildMovieImage(String imageUrl) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
-      child: CachedNetworkImage(
-        imageUrl: imageUrl,
-        width: 50.0,
-        height: 50.0,
-        fit: BoxFit.cover,
-        placeholder: (context, url) => CircularProgressIndicator(),
-        errorWidget: (context, url, error) => Icon(Icons.error),
-      ),
+      
     );
   }
 }
@@ -547,7 +545,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _saveMovie,
-              child: Text('Guardar'),
+              child: Text('Guardaar'),
             ),
           ],
         ),
@@ -586,7 +584,10 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
       imageUrl: _selectedImageUrl,
       description: _descriptionController.text,
       horario: _horarioController.text,
-      categories: 'Accion',
+      categories: 'Accion',//
+      isFavorite: false,//
+      review: "ni idea",//
+
     );
 
     final provider = context.read<ProviderPelicula>();

@@ -41,7 +41,6 @@ dependencies:
   flutter_bloc: ^7.0.0
   equatable: ^2.0.3
   google_fonts: ^2.0.0
-  cached_network_image: ^3.0.0 
   provider:
   flutter_riverpod: ^2.4.10
   riverpod: ^2.5.0

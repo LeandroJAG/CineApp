@@ -110,12 +110,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       formKey.currentState!.save();
 
       UsuarioModel usuario = UsuarioModel(
-        contrasena: _passwordController.text,
-        correo: _emailController.text,
-        direccion: _addressController.text,
-        nombre: _firstNameController.text,
-        telefono: _phoneController.text,
         apellido: _lastNameController.text,
+        telefono: _phoneController.text,
+        nombre: _firstNameController.text,
+        direccion: _addressController.text,
+        correo: _emailController.text,
+        contrasena: _passwordController.text,
       );
 
       usuarioProvider.createUsuario(usuario);

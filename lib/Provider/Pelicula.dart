@@ -5,30 +5,28 @@ import 'package:prueba/Models/Carteleramodel.dart';
 
 class ProviderPelicula with ChangeNotifier {
   final String _endpoint =
-      "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula";
+      "https://leanalf.pythonanywhere.com/api/Obtenercarteleras";
 
   List<Movie> _movies = [];
 
   List<Movie> get movies => _movies;
- Future<List<Movie>> getAll() async {
-  try {
-    final String _endpoint =
-        "https://carteleracine-91a56-default-rtdb.firebaseio.com/Pelicula.json";
-    final response = await http.get(Uri.parse(_endpoint));
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      _movies = jsonData.entries.map((entry) {
-          return Movie.fromMap(entry.value);
-        }).toList();
+  Future<List<Movie>> getAll() async {
+    try {
+      final response = await http.get(Uri.parse(_endpoint));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _movies = data.map((sillaData) => Movie.fromJson(sillaData)).toList();
         notifyListeners();
         return _movies;
-    } else {
-      throw Exception("Ocurrió algo ${response.statusCode}");
+      } else {
+        throw Exception('Failed to load sillas');
+      }
+    } catch (e) {
+      throw Exception('Error fetching sillas: $e');
     }
-  } catch (e) {
-    throw Exception("Error $e");
   }
-}
+
+
 
   Future<void> deleteMovie(String movieId) async {
   try {
@@ -69,3 +67,9 @@ Future<String> save(Movie data) async {
   void addMovie(Movie newMovie) {}
 
 }
+
+
+
+
+
+

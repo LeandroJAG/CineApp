@@ -89,3 +89,37 @@ class AuthenticationServices {
 
 
 }
+
+
+class AuthService {
+  final String _baseUrl = 'http://leanalf.pythonanywhere.com/api/'; 
+
+  Future<bool> signIn(String correo, String contrasena) async {
+  try {
+    final url = Uri.parse('$_baseUrl/loginusuarios');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'correo': correo, 'contrasena': contrasena}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final token = data['token'];
+      print("token");
+      print(token);
+      // Guardar token en SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', token);
+      await prefs.setInt('usuario_id', data['usuario_id']);
+      await prefs.setBool('isLoggedIn', true);
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    print('Error en signIn carita: $e');
+    return false;
+  }
+}
+}
