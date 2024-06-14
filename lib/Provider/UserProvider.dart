@@ -1,14 +1,14 @@
 import 'dart:convert';
-
+ 
 import 'package:prueba/Models/Usuario.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
+ 
 class FirebaseProvider {
    
   final String _endpoint =
-      "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
-
+      "http://leanalf.pythonanywhere.com/";
+ 
   Future<Map<String, dynamic>> fetchUsuarios() async {
     final response = await http.get(Uri.parse(_endpoint));
     if (response.statusCode == 200) {
@@ -19,11 +19,11 @@ class FirebaseProvider {
     }
   }
 }
-
+ 
 class AuthenticationServices {
  
   final FirebaseProvider _firebaseProvider = FirebaseProvider();
-
+ 
   Future<bool> signIn(String email, String password) async {
     final usuarios = await _firebaseProvider.fetchUsuarios();
     final usuario = usuarios.values.firstWhere(
@@ -36,14 +36,14 @@ class AuthenticationServices {
       prefs.setString('correo', email);
       prefs.setString('pin', password);
     }
-
+ 
     return usuario != null;
   }
-
+ 
   Future<List<UsuarioModel>> getAll() async {
     try {
       final String _endpoint =
-          "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
+          "http://leanalf.pythonanywhere.com/";
       final response = await http.get(Uri.parse(_endpoint));
       if (response.statusCode == 200) {
        // print("entro");
@@ -63,21 +63,21 @@ class AuthenticationServices {
       print("entro al provider");
    
     try {
-      final url = "https://carteleracine-91a56-default-rtdb.firebaseio.com/Usuarios.json";
+      final url = "http://leanalf.pythonanywhere.com/";
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         //print(response.body);
         String body = utf8.decode(response.bodyBytes);
         final jsonData = jsonDecode(body);
-        
+       
         final authenticatedUser =
             User.fromJsonListUserAuthenticate(jsonData, username, password);
             if (authenticatedUser.usersAuthenticated==null) {
-            
+           
              throw Exception("Usuario no registrado");
             }
-          
-      
+         
+     
         return authenticatedUser.usersAuthenticated;
       } else {
         throw Exception("Ocurrió algo ${response.statusCode}");

@@ -41,6 +41,10 @@ dependencies:
   flutter_bloc: ^7.0.0
   equatable: ^2.0.3
   google_fonts: ^2.0.0
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 23378b8b6287f5291f262df99529f801351c10bc
   provider:
   flutter_riverpod: ^2.4.10
   riverpod: ^2.5.0
